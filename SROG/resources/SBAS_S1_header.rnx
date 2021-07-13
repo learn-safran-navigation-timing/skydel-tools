@@ -1,0 +1,12 @@
+     3.04           OBSERVATION DATA    R                   RINEX VERSION / TYPE
+sbf2rin-13.4.5                          20200813 185642 UTC PGM / RUN BY / DATE
+SEPT                                                        MARKER NAME
+Unknown                                                     MARKER NUMBER
+Unknown             Unknown                                 OBSERVER / AGENCY
+3013296             SEPT POLARX5        5.3.0               REC # / TYPE / VERS
+Unknown             Unknown                                 ANT # / TYPE
+  1320816.1902 -4320195.0015  4487349.8252                  APPROX POSITION XYZ
+        0.0000        0.0000        0.0000                  ANTENNA: DELTA H/E/N
+S    2 C1C L1C                                              SYS / # / OBS TYPES
+  2020     3    31     0     1   49.0000000     GPS         TIME OF FIRST OBS
+                                                            END OF HEADER
