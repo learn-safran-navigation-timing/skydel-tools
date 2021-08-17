@@ -1,0 +1,8 @@
+PyQt5==5.15.2
+pyserial==3.5
+qtmodern==0.2.0
+matplotlib==3.3.3
+numpy==1.19.0
+pandas==1.1.4
+plotly~=4.14.1
+QtPy~=1.9.0
