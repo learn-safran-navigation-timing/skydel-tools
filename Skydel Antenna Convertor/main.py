@@ -1,8 +1,19 @@
+"""
+Antenna Pattern Convertor - Main QT application class.
+
+Created on 31 03 20211
+
+:author: Grace Oulai
+:copyright: Skydel © 2021
+:Version: 21.3.2
+"""
+# Imports
 import csv
 import os
 import re
 import sys
 import time
+import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,23 +22,19 @@ import qtmodern.styles
 import qtmodern.windows
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLineEdit, QLabel, QMenuBar, QDesktopWidget, QMessageBox, QComboBox, QFormLayout, QGroupBox, \
-    QFileDialog
+from PyQt5.QtWidgets import QLineEdit, QLabel, QMenuBar, QDesktopWidget, QMessageBox, QComboBox, QFormLayout, \
+    QGroupBox, QFileDialog
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from plotly.offline import plot
 from about import Ui_AboutDialog
 from new_extractor import NewAntReader
-
-matplotlib.use('Qt5Agg')
 from PyQt5 import QtWidgets, QtGui, QtCore
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from numpy import inf
-import pandas as pd
 
+matplotlib.use('Qt5Agg')
 start = time.time()
-
-"ADD warning when file is not csv format"
 
 
 def update_plot_1_2(X, Y, Z, G):
@@ -56,9 +63,40 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
+        self.ui_about = Ui_AboutDialog()
+        self.new_reader = NewAntReader()
+
+        self.model_filename = ""
+        self.ant_filename = ""
+        self.csv_filename = ""
+        self.freq1 = ""
+        self.col_studio = int()
+        self.selected_freq = ""
+        self.true_list_freq = []
+        self.index_freq = int()
+        self.power_2 = np.empty(10, dtype=object)
+        self.selected_freq = ""
+        self.theta_sample_convert_1 = np.empty(1000, dtype=object)
+        self.phi_sample_convert_1 = np.empty(1000, dtype=object)
+        self.list_frequency = list()
+        self.new_data = list()
+        self.matrix_gain_1 = np.empty(1000, dtype=object)
+        self.matrix_gain_save = np.empty(1000, dtype=object)
+        self.phi_2 = np.empty(1000, dtype=object)
+        self.phi_studio = np.empty(1000, dtype=object)
+        self.pas_azimuth_studio = np.empty(1000, dtype=object)
+        self.csv_line = int()
+        self.csv_col = int()
+        self.theta_2 = np.empty(1000, dtype=object)
+        self.pas_azimuth_2 = np.empty(1000, dtype=object)
+        # Menubar
+        self.setStyleSheet("""QToolTip {
+                                   background-color: #232b2b;
+                                   color: white;
+                                   border: #232b2b solid 1px
+                                   }""")
         ''' This part is the implementation of the Ui view'''
-        # *************************************************************************************************************
-        # ******************************* Menubar
+
         hlay = QtWidgets.QVBoxLayout()
         label = QtWidgets.QLabel()
         pixmap = QtGui.QPixmap('Skydel-NewLogo.png')
@@ -66,17 +104,6 @@ class MainWindow(QtWidgets.QMainWindow):
         label.setPixmap(pixmap.scaled(label.size(), QtCore.Qt.KeepAspectRatio))
         hlay.addWidget(label, 0)
         menubar = QMenuBar()
-        actionFile1 = menubar.addMenu("View")
-        self.ui_view = actionFile1.addAction("UI view")
-        self.ui_view.setCheckable(True)
-        self.ui_view.setChecked(True)
-        self.ui_view.triggered.connect(self.on_view_changed)
-        actionFile1.addSeparator()
-        self.html_view = actionFile1.addAction("HTML view")
-        self.html_view.setCheckable(True)
-        self.html_view.setChecked(False)
-        self.html_view.triggered.connect(self.on_view_changed)
-        self.view_type = 1
         actionFile2 = menubar.addMenu("Help")
         self.about_ui = actionFile2.addAction("About")
         self.about_ui.triggered.connect(self.show_about)
@@ -104,6 +131,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.elevation_range_1.setFont(QFont('Arial', 9))
         self.azimuth_range_1 = QLineEdit()
         self.azimuth_range_1.setFont(QFont('Arial', 9))
+
+        self.theta_sample_num_1.setEnabled(False)
+        self.phi_sample_num_1.setEnabled(False)
+        self.pas_theta_1.setEnabled(False)
+        self.pas_phi_1.setEnabled(False)
+        self.frequency_1.setEnabled(False)
+        self.elevation_range_1.setEnabled(False)
+        self.azimuth_range_1.setEnabled(False)
 
         layout_std_details.addRow("El sample", self.theta_sample_num_1)
         layout_std_details.addRow("Az sample", self.phi_sample_num_1)
@@ -142,6 +177,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.azimuth_range_2 = QLineEdit()
         self.azimuth_range_2.setFont(QFont('Arial', 9))
 
+        self.theta_sample_num_2.setEnabled(False)
+        self.phi_sample_num_2.setEnabled(False)
+        self.frequency_edit_2.setEnabled(False)
+        self.pas_theta_2.setEnabled(False)
+        self.pas_phi_2.setEnabled(False)
+        self.elevation_range_2.setEnabled(False)
+        self.azimuth_range_2.setEnabled(False)
+
         layout_sky_details.addRow("El sample", self.theta_sample_num_2)
         layout_sky_details.addRow("Az sample", self.phi_sample_num_2)
         emailLabel = QLabel("Frequency")
@@ -160,38 +203,39 @@ class MainWindow(QtWidgets.QMainWindow):
         sky_details_group.setLayout(layout_sky_details)
         sky_details_group.setStyleSheet("QGroupBox{border-radius:3.5px; padding-top:1px; margin-top:-1px}")
 
-        spacerItem0 = QtWidgets.QSpacerItem(102, 61, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        # spacerItem0 = QtWidgets.QSpacerItem(102, 61, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.spacerItem01 = QtWidgets.QSpacerItem(102, 91, QtWidgets.QSizePolicy.Expanding,
                                                   QtWidgets.QSizePolicy.Minimum)
 
         self.frame1 = QtWidgets.QFrame(self)
         self.frame1.setFrameShadow(QtWidgets.QFrame.Plain)
 
-        layout_multi_freq = QFormLayout()
+        # layout_multi_freq = QFormLayout()
         self.combo3 = QComboBox(self)
+        self.combo3.setToolTip('Select a frequency.')
         self.combo3.setFont(QFont('Arial', 9))
-        self.combo3.activated[str].connect(self.onActivated3)
-        layout_multi_freq.addWidget(self.combo3)
+        self.combo3.activated[str].connect(self.on_activated_3)
+        # layout_multi_freq.addWidget(self.combo3)
 
-        self.multi_freq_details = QLabel("Select frequency ( Hz)")
-        self.multi_freq_details.setFont(QFont('Arial', 9))
-        self.multi_freq_details.setStyleSheet("background-color:slategray; border-radius:3.5px")
-        self.multi_freq_details.setAlignment(Qt.AlignCenter)
-        self.multi_freq_group = QGroupBox()
-        self.multi_freq_group.setLayout(layout_multi_freq)
-        self.multi_freq_group.setStyleSheet("QGroupBox{border-radius:3.5px; padding-top:1px; margin-top:-1px}")
-
-        self.multi_freq_details.setVisible(False)
-        self.multi_freq_group.setVisible(False)
+        # self.multi_freq_details = QLabel("Select frequency ( Hz)")
+        # self.multi_freq_details.setFont(QFont('Arial', 9))
+        # self.multi_freq_details.setStyleSheet("background-color:#3f829d; border-radius:3.5px")
+        # self.multi_freq_details.setAlignment(Qt.AlignCenter)
+        # self.multi_freq_group = QGroupBox()
+        # self.multi_freq_group.setLayout(layout_multi_freq)
+        # self.multi_freq_group.setStyleSheet("QGroupBox{border-radius:3.5px; padding-top:1px; margin-top:-1px}")
+        #
+        # self.multi_freq_details.setVisible(False)
+        # self.multi_freq_group.setVisible(False)
 
         self.menubar_layout = QtWidgets.QVBoxLayout()
         self.menubar_layout.addWidget(menubar, 0)
-        self.menubar_layout.addWidget(self.frame1, 2)
-        self.menubar_layout.addItem(spacerItem0)
-        self.menubar_layout.addWidget(self.multi_freq_details, 1)
-        self.menubar_layout.addWidget(self.multi_freq_group, 1)
+        # self.menubar_layout.addWidget(self.frame1, 2)
+        # self.menubar_layout.addItem(spacerItem0)
+        # self.menubar_layout.addWidget(self.multi_freq_details, 1)
+        # self.menubar_layout.addWidget(self.multi_freq_group, 1)
 
-        self.menubar_layout.addWidget(self.frame1, 3)
+        # self.menubar_layout.addWidget(self.frame1, 3)
         self.menubar_layout.addItem(self.spacerItem01)
         self.menubar_layout.addWidget(self.title_std_details, 2)
         self.menubar_layout.addWidget(std_details_group, 2)
@@ -200,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menubar_layout.addWidget(self.title_sky_details, 3)
         self.menubar_layout.addWidget(sky_details_group, 3)
         self.menubar_layout.addWidget(self.frame1, 4)
-        self.menubar_layout.addItem(spacerItem0)
+        self.menubar_layout.addItem(self.spacerItem01)
 
         # *************************************************************************************************************
         # Studio view to Skydel View
@@ -241,10 +285,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.Z1 = R1 * np.cos(THETA1)
         self.axes1.plot_wireframe(self.X1, self.Y1, self.Z1, linewidth=0.5, rstride=3, cstride=3)
 
-        combo1 = QLineEdit(self)
-        combo1.setFont(QFont('Arial', 10))
-        combo1.setEnabled(False)
-        combo1.setStyleSheet("background-color:white")
+        # combo1 = QLineEdit(self)
+        # combo1.setFont(QFont('Arial', 10))
+        # combo1.setEnabled(False)
+        # combo1.setStyleSheet("background-color:white")
 
         self.file_save_path_1 = QLineEdit()
         self.file_save_path_1.setText("File save here:")
@@ -252,12 +296,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_save_path_1.setFont(QFont('Arial', 10))
 
         self.save_button_1_layout = QtWidgets.QHBoxLayout()
+        # self.save_button1 = flash_button()
         self.save_button1 = QtWidgets.QPushButton('Save csv')
         self.save_button1.setFont(QFont('Arial', 10))
+        # self.save_button1.setText("Save csv")
         self.save_button1.clicked.connect(self.save_file_1)
         self.save_button1.setEnabled(False)
+        # self.save_button1.setStyleSheet("background-color:white; border-radius:3.5px")
         self.save_button_1_layout.setAlignment(Qt.AlignCenter)
         self.save_button_1_layout.addWidget(self.save_button1)
+
         # self.save_button_1_layout.addWidget(self.file_save_path_1)
 
         spacerItem1 = QtWidgets.QSpacerItem(50, 15, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -269,7 +317,7 @@ class MainWindow(QtWidgets.QMainWindow):
         layout1.addLayout(self.load_button_1_layout)
         layout1.addWidget(self.canvas1, 3)
         layout1.addWidget(toolbar1, 4)
-        layout1.addWidget(combo1, 5)
+        layout1.addWidget(self.combo3, 5)
         layout1.addLayout(self.save_button_1_layout)
 
         # **************************************************************************************************************
@@ -317,9 +365,11 @@ class MainWindow(QtWidgets.QMainWindow):
         combo2.addItem('GPS L1')
         combo2.addItem('GPS L2')
         combo2.addItem('GPS L5')
-        combo2.addItem('GlONASS L1')
+        combo2.addItem('GLONASS L1')
         combo2.addItem('GLONASS L2')
-        combo2.activated[str].connect(self.onActivated2)
+        combo2.activated[str].connect(self.on_activated_2)
+        combo2.setToolTip('Select a frequency.')
+
         self.frequency_2 = 'GPS_L1'
         self.frequency_2_val = "1.57542e+09"
 
@@ -330,9 +380,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.save_button_2_layout = QtWidgets.QHBoxLayout()
         self.save_button2 = QtWidgets.QPushButton('Save ant')
+        # self.save_button2 = flash_button_2()
+        # self.save_button2.setText("Save ant")
         self.save_button2.setFont(QFont('Arial', 10))
         self.save_button2.clicked.connect(self.save_file_2)
         self.save_button2.setEnabled(False)
+        # self.save_button2.setStyleSheet("background-color:white; border-radius:3.5px")
         self.save_button_2_layout.setAlignment(Qt.AlignCenter)
         self.save_button_2_layout.addWidget(self.save_button2)
 
@@ -365,6 +418,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.resize(1324, 934)
         self.setCentralWidget(widget)
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
 
         qtRectangle = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
@@ -372,6 +426,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.move(qtRectangle.topLeft())
 
     def load_ant(self):
+        self.combo3.clear()
 
         self.model_filename, _filter = QtWidgets.QFileDialog.getOpenFileName(None, "Open " + " DATA Files", ".",
                                                                              "(*.ant)")
@@ -379,10 +434,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.file_path_1.setText(self.model_filename)
             self.ant_filename = self.model_filename
             self.convert_1()
-        elif self.model_filename == "":
-            QMessageBox.about(self, "Load file error", "File path is empty.")
-        else:
-            QMessageBox.about(self, "Load file error", "File path is empty.")
 
     def load_csv(self):
         self.model_filename, _filter = QtWidgets.QFileDialog.getOpenFileName(None, "Open " + " DATA Files", ".",
@@ -391,10 +442,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.file_path_2.setText(self.model_filename)
             self.csv_filename = self.model_filename
             self.convert_2()
-        elif self.model_filename == "":
-            QMessageBox.about(self, "Load file error", "File path is empty.")
-        else:
-            QMessageBox.about(self, "Load file error", "File path is empty.")
 
     def on_view_changed(self):
         if self.ui_view.isChecked():
@@ -413,38 +460,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self.combo3.clear()
         try:
             if file_extension_1 == ".ant":
-                self.new_reader = NewAntReader()
-                occur, data, self.freq1, self.theta_sample_convert_1, self.phi_sample_convert_1 = self.new_reader.check_multi(
-                    self.ant_filename, 7)
-
-                self.true_list_freq = []
-                self.index_freq = int()
-                self.selected_freq = ""
+                occur, data, self.freq1, self.theta_sample_convert_1, self.phi_sample_convert_1 = \
+                    self.new_reader.check_multi(self.ant_filename, 7)
 
                 if occur < 1:
-                    self.multi_freq_details.setVisible(False)
-                    self.multi_freq_group.setVisible(False)
-                    freq, elev_list, azim_list, gain = self.new_reader.read_info(data, 7)
+                    freq, elev_list, azim_list, gain = self.new_reader.read_info(data)
                     line_skip = len(data)
-                    self.convert_1_suite(freq, self.theta_sample_convert_1, self.phi_sample_convert_1, elev_list,
+                    self.convert_1_suite(self.theta_sample_convert_1, self.phi_sample_convert_1, elev_list,
                                          azim_list,
                                          gain, line_skip)
                 else:
                     # print(" Theta and phi sample:", self.theta_sample_convert_1, self.phi_sample_convert_1)
                     self.list_frequency, self.new_data = self.new_reader.slice_data(data, 7)
-                    self.true_list_freq.append(str(self.freq1))
+                    corresponding_feq = self.detect_frequency(str(self.freq1))
+                    self.true_list_freq.append(corresponding_feq)
                     for freq in self.list_frequency:
                         true_freq = freq[1]
-                        self.true_list_freq.append(str(true_freq))
+                        corresponding_feq = self.detect_frequency(str(true_freq))
+                        self.true_list_freq.append(corresponding_feq)
                     self.axes1.plot_wireframe(self.X1, self.Y1, self.Z1, linewidth=0.5, rstride=3, cstride=3)
                     self.combo3.addItems(self.true_list_freq)
-                    self.multi_freq_details.setVisible(True)
-                    self.multi_freq_group.setVisible(True)
                     self.combo3.setCurrentText(self.freq1)
-                    QMessageBox.about(self, "Frequency selection", "Multiple frequency detected.")
-
-                    QMessageBox.about(self, "Frequency selection",
-                                      "Please, select a frequency in the select frequency box to continue.")
+                    QMessageBox.about(self, "Multiple frequency detected",
+                                      "Please, select a frequency in the select frequency box to view.")
             else:
                 QMessageBox.about(self, ".ant File conversion error", "The selected file is not an ant file")
 
@@ -457,12 +495,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.selected_freq:
             index = self.true_list_freq.index(self.selected_freq)
             data_part = self.new_data[index]
-            freq, elev_list, azim_list, gain = self.new_reader.read_info(data_part, 7)
+            freq, elev_list, azim_list, gain = self.new_reader.read_info(data_part)
             line_skip = len(data_part)
-            self.convert_1_suite(freq, self.theta_sample_convert_1, self.phi_sample_convert_1, elev_list, azim_list,
+            self.convert_1_suite(self.theta_sample_convert_1, self.phi_sample_convert_1, elev_list, azim_list,
                                  gain, line_skip)
 
-    def convert_1_suite(self, freq, theta_sample, phi_sample, elev_list, azim_list, gain, line_skip):
+    def convert_1_suite(self, theta_sample, phi_sample, elev_list, azim_list, gain, line_skip):
         ang_elevation = np.array(elev_list)
         matrix_elevation = []
         matrix_azimuth = []
@@ -513,14 +551,14 @@ class MainWindow(QtWidgets.QMainWindow):
                     list_elevation.append(el)
                     list_azimuth.append(az)
                     find_el_az = [float(el), float(az)]
-                    finded_gain = find_gain(find_el_az, line_skip, ang_elevation, ang_azimuth, gain)
-                    chech_inf = round(finded_gain, 5)
-                    if chech_inf == -inf:
+                    found_gain = find_gain(find_el_az, line_skip, ang_elevation, ang_azimuth, gain)
+                    check_inf = round(found_gain, 5)
+                    if check_inf == -inf:
                         list_gain.append(-100.0)
-                    elif chech_inf == inf:
+                    elif check_inf == inf:
                         list_gain.append(100.0)
                     else:
-                        list_gain.append(finded_gain)
+                        list_gain.append(found_gain)
 
                 self.matrix_gain_1.append(list_gain)
                 matrix_azimuth.append(list_azimuth)
@@ -531,7 +569,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.save_button1.setEnabled(True)
 
     def plot_antenna_1(self, matrix_elevation, matrix_azimuth, matrix_gain):
-        # #print(" ***** start Plot antenna")
 
         matrix_elevation = np.add(matrix_elevation, -90.0)
         THETA = np.deg2rad(matrix_elevation)
@@ -541,16 +578,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         Rmax = (np.max(R))
         Rmin = (np.min(R))
-        RmaxMap = (np.max(R))
-        RminMap = (np.min(R))
-
-        # #print(Rmin)
         check_same_gain = np.all(R == R[0])
-        count_zero = np.count_nonzero(R)
-        count_total = len(R)
-        # print("count:", count_zero, count_total)
 
-        if check_same_gain == False:
+        if not check_same_gain:
             if Rmin < 0.0:
                 R = np.add(R, +abs(Rmin))
             else:
@@ -558,31 +588,26 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             R = np.add(R, +abs(Rmin))
 
-        Rmap = R
         if Rmax < abs(Rmin):
             Rmax = Rmin
 
         is_all_zero = np.all((R == 0))
         if is_all_zero:
             R = np.add(R, 1)
-            Rmax = 1
-            RminMap = 0
-            RmaxMap = 0
 
         X = R * np.sin(THETA) * np.cos(PHI)
         Y = R * np.sin(THETA) * np.sin(PHI)
         Z = R * np.cos(THETA)
 
         if self.view_type == 1:
-            self.update_plot_1_1(X, Y, Z, G, Rmax)
+            self.update_plot_1_1(X, Y, Z, G)
         elif self.view_type == 2:
             update_plot_1_2(X, Y, -Z, G)
         else:
-            self.update_plot_1_1(X, Y, Z, G, Rmax)
+            self.update_plot_1_1(X, Y, Z, G)
             update_plot_1_2(X, Y, -Z, G)
 
-    def update_plot_1_1(self, X, Y, Z, G, Rmax):
-        # #print("***** Update Plot start")
+    def update_plot_1_1(self, X, Y, Z, G):
         self.mappable1.set_array(G)
         self.mappable2.set_array(G)
         Gmax = (np.max(G))
@@ -603,7 +628,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.axes1.plot([0, -axes_length * Gmax], [0, 0], [0, 0], linewidth=1, color='red')
         self.axes1.plot([0, 0], [0, -axes_length * Gmax], [0, 0], linewidth=1, color='green')
         self.axes1.plot([0, 0], [0, 0], [0, -axes_length * Gmax], linewidth=1, color='blue')
-        # self.axes1.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->"))
         self.axes1.plot_surface(
             X, Y, Z, rstride=1, cstride=1, cmap=self.mappable1.cmap,
             linewidth=0, antialiased=False, alpha=0.5, zorder=0.5)
@@ -614,7 +638,7 @@ class MainWindow(QtWidgets.QMainWindow):
         base1 = os.path.basename(self.ant_filename)
         ant_name = os.path.splitext(base1)[0]
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", ant_name,
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save DATA", ant_name,
                                                   "All Files (*);;Text Files (*.csv)", options=options)
         return fileName
 
@@ -623,16 +647,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if skydel_file_name:
             base1 = os.path.basename(self.ant_filename)
             studio_view_name = os.path.splitext(base1)[0]
-            # #print(studio_view_name)
             text1 = "Studio View to Skydel: " + studio_view_name
             self.title1.setText(text1)
-            # print(skydel_file_name)
             with open(skydel_file_name, mode='w') as ant_pattern:
                 ant_pattern = csv.writer(ant_pattern, delimiter=',', quotechar='"', lineterminator='\n',
                                          quoting=csv.QUOTE_MINIMAL)
-                for list in self.matrix_gain_save:
-                    ant_pattern.writerow(list)
-            save_file_path_1 = os.path.splitext(self.ant_filename)[0] + skydel_file_name
+                for list_gain in self.matrix_gain_save:
+                    ant_pattern.writerow(list_gain)
         else:
             QMessageBox.about(self, ".ant File conversion error", "No path found")
 
@@ -643,59 +664,48 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if file_extension_2 == ".csv":
                 data = pd.read_csv(self.csv_filename, error_bad_lines=False, header=None)
-                # #print(data.iloc[0:, 0:])
                 power = np.asarray(data.iloc[0:, 0:])
                 self.power_2 = power
-                # power = np.power(10, power * 0.1)  # converting from db to watt
-                self.ligne, self.colonne = np.shape(power)
-                # print(self.ligne, self.colonne)
+                self.csv_line, self.csv_col = np.shape(power)
 
                 theta = []
                 phi = []
                 new_power = []
                 power_1 = []
-                new_phi = []
-                len_new_phi = int()
                 pas_azimuth = int()
                 pas_elevation = int()
                 try:
-                    pas_elevation = 180 / (int(self.ligne) - 1)
-                    # print("pas_elevation:", pas_elevation)
-
-                    pas_azimuth = 360 / (int(self.colonne) - 1)
-                    # print("pas_azimuth:", pas_azimuth)
+                    pas_elevation = 180 / (int(self.csv_line) - 1)
+                    pas_azimuth = 360 / (int(self.csv_col) - 1)
                     theta = np.arange(-90, 90 + 0.01, pas_elevation)
                     phi = np.arange(0, 360 + 0.01, pas_azimuth)
                     self.phi_2 = phi
-                    # print("Phi 2:", self.phi_2)
                     self.pas_azimuth_studio = pas_azimuth
-                    self.colonne_studio = self.colonne
+                    self.col_studio = self.csv_col
 
                 except ZeroDivisionError:
-                    if self.colonne == 1:
-                        self.colonne_studio = 1
-                        pas_elevation = 180 / (int(self.ligne) - 1)
+                    if self.csv_col == 1:
+                        self.col_studio = 1
+                        pas_elevation = 180 / (int(self.csv_line) - 1)
                         theta = np.arange(-90, 90 + 0.01, pas_elevation)
                         pas_azimuth = 10
-                        # if azimuth is only one column, azimuth is then 0 in all line.
                         phi = np.arange(0, 360, 360)
                         self.phi_studio = phi
                         self.pas_azimuth_studio = 360 + 1
                         new_phi = np.arange(0, 360 + 0.01, pas_azimuth)
                         phi = new_phi
                         len_new_phi = len(new_phi)
-                        # print(len_new_phi)
-                        # print("A completer")
                         for j in range(len(power)):
                             power_1.append(float(power[j]))
                         for i in range(len_new_phi):
                             new_power.append(power_1)
                             power = np.array(new_power)
                             power = power.transpose()
+                            self.power_2 = np.array(new_power)
                             self.power_2 = power
-                            self.ligne, self.colonne = np.shape(power)
+                            self.csv_line, self.csv_col = np.shape(power)
 
-                    if self.ligne == 1:
+                    if self.csv_line == 1:
                         QMessageBox.about(self, ".csv File conversion error",
                                           "This file type is not support, there is only"
                                           " one elevation line")
@@ -708,21 +718,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 R = []
                 self.pas_azimuth_2 = pas_azimuth
                 self.pas_elevation_2 = pas_elevation
-
-                # print(self.ligne, self.colonne)
-                for p in range(0, self.colonne, 1):
-                    # for t in np.arange(0, self.ligne, self.saut_elevation):
-                    for t in range(0, self.ligne, 1):
+                for p in range(0, self.csv_col, 1):
+                    for t in range(0, self.csv_line, 1):
                         THETA.append(float(theta[t]))
                         PHI.append(float(phi[p]))
                         R.append(float(power[t, p]))
 
-                R_2 = R
-
                 THETA = np.deg2rad(np.asarray(THETA))
                 PHI = np.deg2rad(np.asarray(PHI))
                 R = np.array(R)
-                # print(power.shape[1], )
                 THETA = THETA.reshape(power.shape[1], power.shape[0])
                 THETA = np.transpose(THETA)
                 PHI = PHI.reshape(power.shape[1], power.shape[0])
@@ -730,29 +734,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 R = R.reshape(power.shape[1], power.shape[0])
                 R = np.transpose(R)
                 G = R
-                Gmax = (np.max(G))
-                Gmin = (np.min(G))
-                Rmax = (np.max(R))
                 Rmin = (np.min(R))
-                RmaxMap = (np.max(R))
-                RminMap = (np.min(R))
+
                 if Rmin < 0:
                     R = np.add(R, abs(Rmin))
                 else:
                     R = np.add(R, -abs(Rmin))
 
-                if Rmax < abs(Rmin):
-                    Rmax = Rmin
-
-                Rmap = R
-
                 is_all_zero = np.all((R == 0))
                 if is_all_zero:
-                    # print('Array contains only 0')
                     R = np.add(R, 1)
-                    Rmax = 1
-                    RminMap = 0
-                    RmaxMap = 0
 
                 X = R * np.sin(THETA) * np.cos(PHI)
                 Y = R * np.sin(THETA) * np.sin(PHI)
@@ -767,8 +758,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     update_plot_1_2(X, Y, Z, G)
                 self.save_button2.setEnabled(True)
 
-                self.theta_sample_num_2.setText(str(self.ligne))
-                self.phi_sample_num_2.setText(str(self.colonne))
+                self.theta_sample_num_2.setText(str(self.csv_line))
+                self.phi_sample_num_2.setText(str(self.csv_col))
                 self.frequency_edit_2.setText("Default")
                 self.pas_theta_2.setText(str(self.pas_elevation_2))
                 self.pas_phi_2.setText(str(self.pas_azimuth_2))
@@ -784,23 +775,22 @@ class MainWindow(QtWidgets.QMainWindow):
     def save_file_2(self):
 
         theta_studio = []
-        for i in range(0, self.colonne_studio, 1):
+        for i in range(0, self.col_studio, 1):
             theta_studio = np.append(self.theta_2, theta_studio)
 
         theta_studio = np.asarray(theta_studio)
 
         phi_studio = []
-        # print(self.pas_azimuth_2)
         for j in np.arange(0, 360 + 0.01, self.pas_azimuth_studio):
-            for k in range(0, self.ligne, 1):
+            for k in range(0, self.csv_line, 1):
                 phi_studio.append(j)
 
         phi_studio = np.asarray(phi_studio)
 
         gain_studio = []
 
-        for m in range(0, self.colonne_studio, 1):
-            for n in range(0, self.ligne, 1):
+        for m in range(0, self.col_studio, 1):
+            for n in range(0, self.csv_line, 1):
                 gain_studio.append(self.power_2[n, m])
 
         base2 = os.path.basename(self.csv_filename)
@@ -815,9 +805,9 @@ class MainWindow(QtWidgets.QMainWindow):
             f.write("##File Type: Far field\n")
             f.write("#Frequency: " + self.frequency_2_val + "\n")
             f.write("#No. of Theta Samples: ")
-            f.write(str(self.ligne) + "\n")
+            f.write(str(self.csv_line) + "\n")
             f.write("#No. of Phi Samples: ")
-            f.write(str(self.colonne_studio) + "\n")
+            f.write(str(self.col_studio) + "\n")
             f.write("#Far Field Type: Gain\n")
             f.write("#No. of Header Lines: 1\n")
             f.write(
@@ -835,11 +825,11 @@ class MainWindow(QtWidgets.QMainWindow):
             print("Path save here:", save_file_path_2)
             self.file_save_path_2.setText(save_file_path_2)
             self.file_save_path_2.setEnabled(True)
+
         else:
             QMessageBox.about(self, ".csv File conversion error", "No path found")
 
     def update_plot_2_1(self, X, Y, Z, G):
-        # #print("***** Update Plot start")
         self.mappable2.set_array(G)
         Gmax = (np.max(G))
         Gmin = (np.min(G))
@@ -871,24 +861,23 @@ class MainWindow(QtWidgets.QMainWindow):
         base2 = os.path.basename(self.csv_filename)
         csv_name = os.path.splitext(base2)[0]
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", csv_name,
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save DATA", csv_name,
                                                   "All Files (*);;Text Files (*.ant)", options=options)
         print(self.csv_filename)
         print(fileName)
         return fileName
 
     def show_about(self):
-        self.ui_about = Ui_AboutDialog()
         self.ui_about.show()
 
-    def onActivated3(self, text):
+    def on_activated_3(self, text):
         if text:
             self.selected_freq = text
             self.convert_1_multi()
         else:
             QMessageBox.about(self, "Multi-Frequency detected", "No selected frequency")
 
-    def onActivated2(self, text):
+    def on_activated_2(self, text):
         if text == 'GPS L1':
             self.frequency_2 = 'GPS_L1'
             self.frequency_2_val = "1.57542e+09"
@@ -909,8 +898,32 @@ class MainWindow(QtWidgets.QMainWindow):
             self.frequency_2 = 'GLONASS_L2'
             self.frequency_2_val = "1.246e+09"
 
-    def quit_app(self):
+    @staticmethod
+    def quit_app():
         sys.exit()
+
+    @staticmethod
+    def detect_frequency(freq):
+
+        if freq == "1.57542e+09":
+            explicit_freq = 'GPS L1: ' + "1.57542e+09"
+
+        elif freq == "1.2276e+09":
+            explicit_freq = 'GPS L2: ' + "1.2276e+09"
+
+        elif freq == '1.17645e+09':
+            explicit_freq = 'GPS L5: ' + "1.17645e+09"
+
+        elif freq == '1.602e+09':
+            explicit_freq = 'GLO L1: ' + "1.602e+09"
+
+        elif freq == '1.246e+09':
+            explicit_freq = 'GLO L2: ' + "1.246e+09"
+
+        else:
+            explicit_freq = freq
+
+        return explicit_freq
 
 
 if __name__ == '__main__':

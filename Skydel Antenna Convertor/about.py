@@ -5,13 +5,18 @@ import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox, QDialog
+from PyQt5.QtCore import Qt
 
 
 class Ui_AboutDialog(QDialog):
 
     def __init__(self):
+
         super(Ui_AboutDialog, self).__init__()
+        self.setWindowIcon(QtGui.QIcon('Skydel-NewLogo-Square-Orange.png'))
+
         self.setWindowTitle('About')
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
 
         gridLayout = QtWidgets.QGridLayout(self)
         gridLayout.setContentsMargins(0, 0, 0, 40)
@@ -53,7 +58,7 @@ class Ui_AboutDialog(QDialog):
         #                            "}")
         self.tbClose.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("Skydel-NewLogo-Square-Orange.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("orolia_rgb.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tbClose.setIcon(icon)
         self.tbClose.setIconSize(QtCore.QSize(25, 25))
 
@@ -64,13 +69,19 @@ class Ui_AboutDialog(QDialog):
         verticalLayout = QtWidgets.QVBoxLayout()
         verticalLayout.setContentsMargins(26, 20, 26, 25)
         self.lblTitle = QtWidgets.QLabel()
-        self.lblTitle.setText("3D antenna pattern platform")
+        self.lblTitle.setText("3D ANTENNA PATTERN CONVERTOR")
         self.lblTitle.setStyleSheet('color: black')
         verticalLayout.addWidget(self.lblTitle)
         self.lblBuild = QtWidgets.QLabel()
-        self.lblBuild.setText("6.02 Release (Beta)")
+        self.lblBuild.setText("21.4.1")
+        self.lblBuild1 = QtWidgets.QLabel()
+        self.lblBuild1.setText("Release Date  2021-04-06")
         self.lblBuild.setStyleSheet('color: black')
+        self.lblBuild1.setStyleSheet('color: black')
+
         verticalLayout.addWidget(self.lblBuild)
+        verticalLayout.addWidget(self.lblBuild1)
+
         self.label_2 = QtWidgets.QLabel()
         self.label_2.setText("")
         verticalLayout.addWidget(self.label_2)
@@ -79,15 +90,26 @@ class Ui_AboutDialog(QDialog):
         self.lblCopyright.setStyleSheet('color: black')
         verticalLayout.addWidget(self.lblCopyright)
         self.lblCopyrightText = QtWidgets.QLabel()
+        self.lblCopyrightText1 = QtWidgets.QLabel()
+        self.lblCopyrightText2 = QtWidgets.QLabel()
+
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(9)
         self.lblCopyrightText.setFont(font)
         self.lblCopyrightText.setWordWrap(True)
-        self.lblCopyrightText.setText("2021 Skydel. All Rights Reserved.")
+        self.lblCopyrightText.setText("2021 Orolia Canada Inc. All Rights Reserved.")
+        self.lblCopyrightText1.setFont(font)
+        self.lblCopyrightText1.setWordWrap(True)
+        self.lblCopyrightText1.setText("All Rights Reserved.")
+        self.lblCopyrightText2.setFont(font)
+        self.lblCopyrightText2.setWordWrap(True)
+        self.lblCopyrightText2.setText("skydel-support@orolia.com")
         self.lblCopyrightText.setStyleSheet('color: black')
         verticalLayout.addWidget(self.lblCopyrightText)
+        verticalLayout.addWidget(self.lblCopyrightText1)
+        verticalLayout.addWidget(self.lblCopyrightText2)
 
-        gridLayout.addLayout(verticalLayout, 1, 1, 1, 2)
+        gridLayout.addLayout(verticalLayout, 1, 1, 2, 2)
 
         horizontalLayout = QtWidgets.QHBoxLayout()
         horizontalLayout.setContentsMargins(25, 10, 40, 1)
