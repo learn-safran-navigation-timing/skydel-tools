@@ -1,4 +1,7 @@
-# Rinex Glonass file extrapolator
+# Skydel Rinex Observation Generator
+
+Orolia provides a specific Tool Kit, including an easy to use Python Script to generate GLONASS 
+Rinex Observation from Skydel csv raw data.
 
 # Python installation:
 Make sure you have a python from version 3.8 or download the latest python version from https://www.python.org/downloads/.
