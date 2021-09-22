@@ -1,0 +1,130 @@
+--******************************************************************************
+--  Module  : OROLIA-SKYDEL MIB FILE
+--  Date    : 12/11/2020
+--  Author  : Sylvain Dessapt
+--  Purpose : This MIB defines the global registration module for the private
+--            Spectracom MIB.
+--  
+--******************************************************************************
+
+SKYDEL-MIB DEFINITIONS ::= BEGIN
+
+-- A Comment!
+
+-- IMPORTS: Include definitions from other mibs here, which is always
+-- the first item in a MIB file.
+
+-- autres imports
+-- netSnmpExamples		              FROM NET-SNMP-EXAMPLES-MIB
+
+IMPORTS
+	MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE, Integer32, Unsigned32
+        FROM SNMPv2-SMI
+    	MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF;
+	
+
+-- Here import SNMPV3 feature if needed 
+--
+-- A brief description and update information about this mib.
+-- reminder Version : skydel_MIB V8
+
+skydelMIB MODULE-IDENTITY
+    LAST-UPDATED "202011120000Z"            
+    ORGANIZATION "net-snmp"
+    CONTACT-INFO "postal:   OROLIA-SPECTRACOM-SAS FRANCE
+                            3 AV CANADA
+                            91140 LES ULIS 
+
+		  email:    sylvain.dessapt@orolia.com
+                 "
+    DESCRIPTION  "REV V8 : A simple mib for starting and stopping Skydel product through SNMP 
+                 "
+
+
+    REVISION     "202011060000Z"
+    DESCRIPTION     
+                 "Rev 7 - Addjust syntax"
+                 
+
+    ::= { skydelMIB 0 }
+
+
+-- definition of specific ID (SKYDEL 18837.3.5) OROLIA SPECTRACOM Rules 
+
+orolia OBJECT IDENTIFIER       ::= { enterprises 18837}
+specProducts OBJECT IDENTIFIER ::= { orolia 3 }
+
+--******************************************************************************
+-- MIB architecture : 
+--******************************************************************************
+
+
+skydelStatus  OBJECT IDENTIFIER ::= { specProducts 5 }
+
+--******************************************************************************
+-- specSkydel trap   OBJECT IDENTIFIER ::= { spec 99 }  reserved 
+--******************************************************************************
+
+
+--******************************************************************************
+-- SKYDEL CONFIG STATUS
+--******************************************************************************
+
+
+skydelIsRunning OBJECT-TYPE
+    SYNTAX      Integer32 (0..1)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+	"This is object allows to check if Skydel engine is running.
+	user guide :
+	1 return SKYDEL IS RUNNING
+	0 return SKYDEL IS NOT RUNNING
+        user guide : Setting this parameter (value = 1) starts the Skydel product
+        user guide : Setting this parameter (value = 0) stops the Skydel product"
+    DEFVAL { 0 }
+    ::= { skydelStatus 1 }
+
+
+
+--******************************************************************************
+-- Other custom OID to create : 
+--******************************************************************************
+
+-- skydelStart OBJECT-TYPE
+--    SYNTAX      Integer32 (1..1)
+--    MAX-ACCESS  read-write
+--    STATUS      current
+--    DESCRIPTION
+--	"This is object allows to create new simulation cmd to Skydel engine.
+--	user guide : Setting this parameter (value = x) will send action to the Skydel product"
+--    DEFVAL { 0 }
+--    ::= { skydelStatus 2 }
+
+-- skydelStop OBJECT-TYPE
+--    SYNTAX      Integer32 (1..1)
+--    MAX-ACCESS  read-write
+--    STATUS      current
+--    DESCRIPTION
+--	"This is object allows to create new simulation cmd to Skydel engine.
+--	user guide : Setting this parameter (value = x) will send action to the Skydel product"
+--    DEFVAL { 0 }
+--    ::= { skydelStatus 3 }
+
+	
+-- skydelOption OBJECT-TYPE
+--    SYNTAX      Integer32
+--    MAX-ACCESS  read-write
+--    STATUS      current
+--    DESCRIPTION
+--	"This is object allows to create new simulation cmd to Skydel engine.
+--	user guide : Setting this parameter (value = x) will send action to the Skydel product"
+--    DEFVAL { 0 }
+--    ::= { skydelStatus 4 }
+
+--
+
+-- END:  Don't forget this!
+
+END
