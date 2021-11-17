@@ -12,6 +12,7 @@ class RinexReader:
 
     def find_header(self, filename):
         header = ''
+        headers_infos = []
         j = 0
         rinex_detection = 0
         if filename:
@@ -19,6 +20,8 @@ class RinexReader:
                 for i, line in enumerate(handler):
 
                     header += line
+                    headers_infos.append(line)
+
                     j += 1
 
                     if 'GLO' in line:
@@ -31,7 +34,7 @@ class RinexReader:
                         rinex_detection = rinex_detection + 1
                         break
 
-            return j, rinex_detection
+            return j, rinex_detection, headers_infos
 
     def readRinex(self, fileName, lineSkip):
 

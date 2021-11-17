@@ -199,7 +199,7 @@ class MainWindow(QtWidgets.QMainWindow):
             print("Successfully deleted the temporary directory %s" % self.path)
 
         if self.file:
-            skip_header, rin_detec = ephemeris_reader.find_header(self.file)
+            skip_header, rin_detec, self.header_infos  = ephemeris_reader.find_header(self.file)
             if rin_detec == 3:
                 new_lines, length_skipline = ephemeris_reader.readRinex(self.file, skip_header)
                 ephemeris_reader.readline(new_lines, length_skipline)
@@ -366,6 +366,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         f = open(rinex_f, "a+")
 
+        self.header_info_1 = self.header_infos[0]
+        self.header_info_1 = self.header_info_1.split()
+        self.rinex_version = self.header_info_1[0]
+        print(self.rinex_version)
+
         sv_name = sv_name
         sv_year = sv_date[0]
         sv_month = sv_date[1]
@@ -453,27 +458,55 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if int(sv_hour) < 10:
                 if int(sv_name) < 10:
-                    string_date = " " + str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
-                        sv_day) + "  " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
-                        sv_other_1) + " " + str(
-                        sv_other_2) + " " + str(sv_other_3) + "\n"
+
+                    if self.rinex_version == "2.01":
+                        string_date = " " + str(sv_name) + " " + str(sv_year) + " " + str(sv_month) + " " + str(
+                            sv_day) + "  " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
+                    else:
+                        string_date = " " + str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
+                            sv_day) + "  " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
                 else:
-                    string_date = str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
-                        sv_day) + "  " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
-                        sv_other_1) + " " + str(
-                        sv_other_2) + " " + str(sv_other_3) + "\n"
+
+                    if self.rinex_version == "2.01":
+                        string_date = str(sv_name) + " " + str(sv_year) + " " + str(sv_month) + " " + str(
+                            sv_day) + "  " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
+                    else:
+                        string_date = str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
+                            sv_day) + "  " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
 
             else:
                 if int(sv_name) < 10:
-                    string_date = " " + str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
-                        sv_day) + " " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
-                        sv_other_1) + " " + str(
-                        sv_other_2) + " " + str(sv_other_3) + "\n"
+
+                    if self.rinex_version == "2.01":
+                        string_date = " " + str(sv_name) + " " + str(sv_year) + " " + str(sv_month) + " " + str(
+                            sv_day) + " " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
+                    else:
+                        string_date = " " + str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
+                            sv_day) + " " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
                 else:
-                    string_date = str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
-                        sv_day) + " " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
-                        sv_other_1) + " " + str(
-                        sv_other_2) + " " + str(sv_other_3) + "\n"
+
+                    if self.rinex_version == "2.01":
+                        string_date = str(sv_name) + " " + str(sv_year) + " " + str(sv_month) + " " + str(
+                            sv_day) + " " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
+                    else:
+                        string_date = str(sv_name) + " " + str(sv_year) + "  " + str(sv_month) + "  " + str(
+                            sv_day) + " " + str(sv_hour) + " " + str(sv_minutes) + "  " + str(sv_secondes) + " " + str(
+                            sv_other_1) + " " + str(
+                            sv_other_2) + " " + str(sv_other_3) + "\n"
 
             string_date = str(string_date)
             string_date = string_date.replace(exp1, exp2)
