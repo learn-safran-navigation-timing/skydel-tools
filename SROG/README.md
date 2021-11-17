@@ -12,8 +12,8 @@ $ python --version
 # Packages installation:
 $ pip install -r requirements.txt
 
-# Run Antenna Convertor script
+# Run Antenna Convertor script:
 $ python main.py
 
-# Click the button Click "Select directory" to select the directory with your Skydel csv files.
+# Click the button Click "Select directory" to select the directory with your Skydel csv files:
 Enter your simulation date time and click "Generate Rinex" to generate a the new rinex.
