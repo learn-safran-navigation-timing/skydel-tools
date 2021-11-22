@@ -369,7 +369,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.header_info_1 = self.header_infos[0]
         self.header_info_1 = self.header_info_1.split()
         self.rinex_version = self.header_info_1[0]
-        print(self.rinex_version)
 
         sv_name = sv_name
         sv_year = sv_date[0]
