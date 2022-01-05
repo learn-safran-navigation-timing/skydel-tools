@@ -160,6 +160,8 @@ class RinexReader:
             totalsec = int(sv_hour) * 3600 + int(sv_minutes) * 60 + int(float(sv_secondes))
             fieldnames = ['Sat_ID', 'year', 'month', 'day', 'hour', 'min', 'sec', 'totalsec', 'bias', 'freq', 'frame',
                           'x', 'y', 'z', 'vx', 'vy', 'vz', 'ax', 'ay', 'az', 'health', 'freq_num', 'age']
+
+
             if csv_name not in csv_list:
                 csv_list.append(csv_name)
                 with open(csv_name, 'a+', newline='') as file:

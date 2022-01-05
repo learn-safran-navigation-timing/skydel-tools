@@ -26,6 +26,7 @@ from pyubx2.about_dialog import Ui_AboutDialog
 from pyubx2.serial_handler import SerialHandler
 from pyubx2.ubxhelpers import itow2utc
 
+
 # ajouter un bouton connect
 # ajouter un bouton save csv qu'on peut activer et desactiver au cours du sauvetage ( Saving CSV - Not saving CSV.)
 
@@ -260,6 +261,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # ubx_layout = QtWidgets.QHBoxLayout()
         # ubx_layout.addWidget(self.ubx_label, 0)
         # ubx_layout.addWidget(ubx_message_combo, 1)
+
         self.ubx_msg_class = []
         self.ubx_1 = QCheckBox('RXM-RAWX')
         self.ubx_2 = QCheckBox('NAV-PVT')
@@ -822,7 +824,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.refresh_text_box_2("\n")  # MY_FUNCTION_CALL
                 self.refresh_text_box_2("--- Streaming ...")  # MY_FUNCTION_CALL
 
-                if self.stream.is_open ==True:
+                if self.stream.is_open == True:
                     self.startWatch = True
                     self.serial_running = True
 
@@ -1128,62 +1130,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             csv_name_4 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
                                 gnss_sv_id_name) + ".csv"
 
-                            prMes_id = 'prMes_0' + str(gnss_id)
-                            prMes_id_name = getattr(parsed_data, prMes_id)
-
-                            cpMes_id = 'cpMes_0' + str(gnss_id)
-                            cpMes_id_name = getattr(parsed_data, cpMes_id)
-
-                            doMes_id = 'doMes_0' + str(gnss_id)
-                            doMes_id_name = getattr(parsed_data, doMes_id)
-
-                            freq_id = 'freqId_0' + str(gnss_id)
-                            freq_id_name = getattr(parsed_data, freq_id)
-
-                            locktime_id = 'locktime_0' + str(gnss_id)
-                            locktime_id_name = getattr(parsed_data, locktime_id)
-
-                            cno_id = 'cno_0' + str(gnss_id)
-                            cno_id_name = getattr(parsed_data, cno_id)
-
-                            prStdev_id = 'prStdev_0' + str(gnss_id)
-                            prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
-
-                            cpStdev_id = 'cpStdev_0' + str(gnss_id)
-                            cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
-
-                            doStdev_id = 'doStdev_0' + str(gnss_id)
-                            doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
-
-                            trkStat_id = 'trkStat_0' + str(gnss_id)
-                            trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
-
-                            reserved2_id = 'reserved2_0' + str(gnss_id)
-                            reserved2_id_name = getattr(parsed_data, reserved2_id)
-
-                            fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
-                                          'freqId', 'locktime', 'cno']
-                            if not csv_name_4 in self.csv_list_4:
-                                self.csv_list_4.append(csv_name_4)
-                                with open(csv_name_4, 'a', newline='') as file:
-                                    writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                    writer.writeheader()
-                                    writer.writerow({
-                                        'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                        'leapS': parsed_data.leapS,
-                                        'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                        'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-                            else:
-                                with open(csv_name_4, 'a', newline='') as file:
-                                    writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                    writer.writerow({
-                                        'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                        'leapS': parsed_data.leapS,
-                                        'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                        'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-
-                        if gnss_name == "Qszz":
+                        if gnss_name == "QZSS":
                             print(gnss_name)
                             gnss_sv_id = 'svId_0' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
@@ -1558,7 +1505,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                         'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
                                         'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
-                        if gnss_name == "Qszz":
+                        if gnss_name == "QZSS":
                             print(gnss_name)
                             gnss_sv_id = 'svId_' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
@@ -3005,7 +2952,6 @@ class MainWindow(QtWidgets.QMainWindow):
                             #         csv_list.append(csv_name)
                             #     else:
                             #         pass
-
                             if gnss_name == "GLONASS":
                                 print(gnss_name)
                                 gnss_sv_id = 'svId_0' + str(gnss_id)
@@ -3202,7 +3148,9 @@ class MainWindow(QtWidgets.QMainWindow):
                                               'freqId', 'locktime', 'cno']
                                 if not csv_name_5 in self.csv_list_5:
                                     self.csv_list_5.append(csv_name_5)
-                                    with open(csv_name_5, 'a', newline='') as file:
+                                    print(csv_name_5)
+                                    print(self.csv_list_5)
+                                    with open(csv_name_5, 'a+', newline='') as file:
                                         writer = csv.DictWriter(file, fieldnames=fieldnames)
                                         writer.writeheader()
                                         writer.writerow({
@@ -3211,7 +3159,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                             'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
                                             'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
                                 else:
-                                    with open(csv_name_5, 'a', newline='') as file:
+                                    with open(csv_name_5, 'a+', newline='') as file:
                                         writer = csv.DictWriter(file, fieldnames=fieldnames)
                                         writer.writerow({
                                             'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
@@ -3407,16 +3355,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                         cno_id_name = getattr(parsed_data, cno_id)
 
                                         prStdev_id = 'prStdev_' + str(gnss_id)
-                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id),
+                                                                                ubt.U1)
 
                                         cpStdev_id = 'cpStdev_' + str(gnss_id)
-                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id),
+                                                                                ubt.U1)
 
                                         doStdev_id = 'doStdev_' + str(gnss_id)
-                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id),
+                                                                                ubt.U1)
 
                                         trkStat_id = 'trkStat_' + str(gnss_id)
-                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
+                                                                                ubt.U1)
                                         print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
@@ -3432,16 +3384,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                         else:
                                             with open(csv_name_1, 'a+', newline='') as file:
                                                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                     except KeyError as err:
                                         print(err, getattr(parsed_data, gnss_sig_id))
 
@@ -3482,16 +3438,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                         cno_id_name = getattr(parsed_data, cno_id)
 
                                         prStdev_id = 'prStdev_' + str(gnss_id)
-                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id),
+                                                                                ubt.U1)
 
                                         cpStdev_id = 'cpStdev_' + str(gnss_id)
-                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id),
+                                                                                ubt.U1)
 
                                         doStdev_id = 'doStdev_' + str(gnss_id)
-                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id),
+                                                                                ubt.U1)
 
                                         trkStat_id = 'trkStat_' + str(gnss_id)
-                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
+                                                                                ubt.U1)
                                         print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
@@ -3507,16 +3467,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                         else:
                                             with open(csv_name_2, 'a+', newline='') as file:
                                                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                     except KeyError as err:
                                         print(err, getattr(parsed_data, gnss_sig_id))
                                     # if gnss_name == "Galileo":
@@ -3571,16 +3535,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                         cno_id_name = getattr(parsed_data, cno_id)
 
                                         prStdev_id = 'prStdev_' + str(gnss_id)
-                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id),
+                                                                                ubt.U1)
 
                                         cpStdev_id = 'cpStdev_' + str(gnss_id)
-                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id),
+                                                                                ubt.U1)
 
                                         doStdev_id = 'doStdev_' + str(gnss_id)
-                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id),
+                                                                                ubt.U1)
 
                                         trkStat_id = 'trkStat_' + str(gnss_id)
-                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
+                                                                                ubt.U1)
                                         print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
@@ -3596,16 +3564,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                         else:
                                             with open(csv_name_3, 'a+', newline='') as file:
                                                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                     except KeyError as err:
                                         print(err, getattr(parsed_data, gnss_sig_id))
                                 # if gnss_name == "Galileo":
@@ -3660,16 +3632,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                         cno_id_name = getattr(parsed_data, cno_id)
 
                                         prStdev_id = 'prStdev_' + str(gnss_id)
-                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id),
+                                                                                ubt.U1)
 
                                         cpStdev_id = 'cpStdev_' + str(gnss_id)
-                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id),
+                                                                                ubt.U1)
 
                                         doStdev_id = 'doStdev_' + str(gnss_id)
-                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id),
+                                                                                ubt.U1)
 
                                         trkStat_id = 'trkStat_' + str(gnss_id)
-                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
+                                                                                ubt.U1)
                                         print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
@@ -3685,20 +3661,24 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                         else:
                                             with open(csv_name_4, 'a+', newline='') as file:
                                                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                     except KeyError as err:
                                         print(err, getattr(parsed_data, gnss_sig_id))
 
-                                if gnss_name == "Qszz":
+                                if gnss_name == "QZSS":
                                     print(gnss_name)
                                     gnss_sv_id = 'svId_' + str(gnss_id)
                                     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
@@ -3734,16 +3714,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                         cno_id_name = getattr(parsed_data, cno_id)
 
                                         prStdev_id = 'prStdev_' + str(gnss_id)
-                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id),
+                                                                                ubt.U1)
 
                                         cpStdev_id = 'cpStdev_' + str(gnss_id)
-                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id),
+                                                                                ubt.U1)
 
                                         doStdev_id = 'doStdev_' + str(gnss_id)
-                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id),
+                                                                                ubt.U1)
 
                                         trkStat_id = 'trkStat_' + str(gnss_id)
-                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
+                                                                                ubt.U1)
                                         print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
@@ -3759,16 +3743,20 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                         else:
                                             with open(csv_name_5, 'a+', newline='') as file:
                                                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                                                 writer.writerow({
                                                     'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
                                                     'leapS': parsed_data.leapS,
-                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name,
+                                                    'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name,
+                                                    'cno': cno_id_name})
                                     except KeyError as err:
                                         print(err, getattr(parsed_data, gnss_sig_id))
 
@@ -5024,6 +5012,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # serialOut = Serial(self.selected_port, 9600, timeout=3)
         msg = UBXMessage('CFG', 'CFG-RST', SET, navBbrMask=b"\x00")
+
         # msg = UBXMessage('CFG', 'CFG-RST', SET, navBbrMask=0)
         print(msg)
         output = msg.serialize()

@@ -1,0 +1,70 @@
+Metadata-Version: 2.1
+Name: qtmodern
+Version: 0.2.0
+Summary: Qt Widgets Modern User Interface
+Home-page: https://www.github.com/gmarull/qtmodern
+Author: Gerard Marull-Paretas
+Author-email: gerardmarull@gmail.com
+License: MIT
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: User Interfaces
+Requires-Dist: qtpy (>=1.3.1)
+
+========
+qtmodern
+========
+
+.. image:: https://travis-ci.org/gmarull/qtmodern.svg?branch=master
+    :target: https://travis-ci.org/gmarull/qtmodern
+    :alt: Travis build
+
+.. image:: https://img.shields.io/pypi/v/qtmodern.svg
+    :target: https://pypi.python.org/pypi/qtmodern
+    :alt: PyPI Version
+
+``qtmodern`` is a Python package aimed to make PyQt/PySide applications look
+better and consistent on multiple platforms. It provides a custom frameless
+window and a dark theme. In order to be compatible with multiple Python Qt
+wrappers `QtPy <https://github.com/spyder-ide/qtpy>`_ is used. The initial idea
+comes from `this project <https://github.com/Jorgen-VikingGod/Qt-Frameless-Window-DarkStyle>`_.
+
+.. image:: examples/mainwindow.png
+    :width: 450px
+    :align: center
+    :alt: Example
+
+Installation
+------------
+
+The recommended way to install is by using ``pip``, i.e::
+
+    pip install qtmodern
+
+Usage
+-----
+
+In order to use ``qtmodern``, simply apply the style you want to your
+application and then, create a ``ModernWindow`` enclosing the window you want to
+*modernize*::
+
+    import qtmodern.styles
+    import qtmodern.windows
+
+    ...
+
+    app = QApplication()
+    win = YourWindow()
+
+    qtmodern.styles.dark(app)
+    mw = qtmodern.windows.ModernWindow(win)
+    mw.show()
+
+    ...
+
+
+
