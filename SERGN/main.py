@@ -240,7 +240,6 @@ class MainWindow(QtWidgets.QMainWindow):
         fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "New_Rinex",
                                                   "All Files (*);;Text Files (*.rnx)", options=options)
 
-
         if fileName:
 
             return fileName
@@ -265,10 +264,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.max_time = 0
 
+        sv_list = []
+
         self.end_process.setText("Processing...")
 
         self.new_rinex = self.on_file_saved_2()
-
 
         if self.is_folder == 1:
 
@@ -313,12 +313,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     step_time = 900 + 900
                     end_time = 23 * 3600 + 45 * 60
 
-                    true_time = self.max_time
-
-                    true_time = self.totalsec_1
-
-                    self.suite_1(true_time, sv_name, sv_date, Position0, Velocity0, Acceleration0,
-                                 sv_others, infos, curr_time, step_time, end_time)
+                    #true_time = self.totalsec_1
+                    print(true_time)
 
                     if true_time == 900:
 
@@ -358,6 +354,12 @@ class MainWindow(QtWidgets.QMainWindow):
                                                   Acceleration0,
                                                   sv_others, infos, self.new_rinex)
 
+                    else:
+                        self.suite_1(true_time, sv_name, sv_date, Position0, Velocity0, Acceleration0,
+                                     sv_others, infos, curr_time, step_time, end_time)
+
+                        sv_list.append(sv_name)
+
             # shutil.rmtree(self.path)
 
             self.path = "tmp"
@@ -390,7 +392,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def suite_1(self, true_time, sv_name, sv_date, Position0, Velocity0, Acceleration0, sv_others,
                 infos, curr_time, step_time, end_time):
+        global string_date, string_x, string_y, string_z
         mat = []
+        print(true_time)
+        print(self.sv_day_1, sv_date[2])
 
         if self.sv_day_1 < sv_date[2]:
 
@@ -432,10 +437,10 @@ class MainWindow(QtWidgets.QMainWindow):
                                                                                       sv_others,
                                                                                       infos, self.new_rinex)
 
-                        mat.append(string_date)
-                        mat.append(string_x)
-                        mat.append(string_y)
-                        mat.append(string_z)
+                    mat.append(string_date)
+                    mat.append(string_x)
+                    mat.append(string_y)
+                    mat.append(string_z)
 
             # for time in range(curr_time, true_time - 1, step_time):
             #     self.direc = "past"
@@ -529,7 +534,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #                           Acceleration0, sv_others, infos, self.new_rinex)
 
         elif self.sv_day_1 == sv_date[2]:
-
+            print(self.totalsec_1, curr_time)
             if self.totalsec_1 == curr_time:
 
                 if self.time_stop == 1:
@@ -606,6 +611,115 @@ class MainWindow(QtWidgets.QMainWindow):
 
                         self.rinex_parser(time, sv_name, sv_date, next_Position, next_Velocity,
                                           Acceleration0, sv_others, infos, self.new_rinex)
+
+            elif self.totalsec_1 < curr_time:
+
+
+                for time in range(curr_time, self.totalsec_1 - 1, -step_time):
+                    self.direc = "past"
+
+                    res2, self.time_row = self.midle_func(self.time_row, time)
+
+                    if time == true_time:
+                        string_date, string_x, string_y, string_z = self.midle_func_2(time)
+
+                    else:
+                        if res2 == 1:
+
+                            next_Position, next_Velocity, Acceleration0 = range_kutta.check_multi(self.direc,
+                                                                                                  Position0,
+                                                                                                  Velocity0,
+                                                                                                  Acceleration0)
+
+                        else:
+
+                            next_Position, next_Velocity, Acceleration0 = range_kutta.check_multi(self.direc, Position0,
+                                                                                                  Velocity0,
+                                                                                                  Acceleration0)
+
+                            self.rinex_parser(time, sv_name, sv_date, next_Position, next_Velocity,
+                                              Acceleration0, sv_others, infos, self.new_rinex)
+
+                            string_date, string_x, string_y, string_z = self.rinex_parser(time, sv_name, sv_date,
+                                                                                          next_Position,
+                                                                                          next_Velocity, Acceleration0,
+                                                                                          sv_others,
+                                                                                          infos, self.new_rinex)
+
+                        mat.append(string_date)
+                        mat.append(string_x)
+                        mat.append(string_y)
+                        mat.append(string_z)
+
+                # for time in range(curr_time, true_time - 1, step_time):
+                #     self.direc = "past"
+                #     if time == true_time:
+                #         string_date, string_x, string_y, string_z = self.midle_func_2(time)
+                #     else:
+                #
+                #         next_Position, next_Velocity, Acceleration0 = range_kutta.check_multi(self.direc, Position0,
+                #                                                                               Velocity0,
+                #                                                                               Acceleration0)
+                #
+                #         self.rinex_parser(time, sv_name, sv_date, next_Position, next_Velocity,
+                #                           Acceleration0, sv_others, infos, self.new_rinex)
+                #
+                #         string_date, string_x, string_y, string_z = self.rinex_parser(time, sv_name, sv_date,
+                #                                                                       next_Position,
+                #                                                                       next_Velocity, Acceleration0,
+                #                                                                       sv_others,
+                #                                                                       infos, self.new_rinex)
+                #
+                #     mat.append(string_date)
+                #     mat.append(string_x)
+                #     mat.append(string_y)
+                #     mat.append(string_z)
+
+                self.past_time(mat)
+                mat_x = mat[1]
+                mat_v = mat[2]
+                mat_a = mat[3]
+
+                mat_x = mat_x.replace('e', 'E').replace('E-', 'Eneg').replace('-', ' -').split()
+                mat_x = [item.replace('Eneg', 'E-') for item in mat_x]
+
+                mat_v = mat_v.replace('e', 'E').replace('E-', 'Eneg').replace('-', ' -').split()
+                mat_v = [item.replace('Eneg', 'E-') for item in mat_v]
+
+                mat_a = mat_a.replace('e', 'E').replace('E-', 'Eneg').replace('-', ' -').split()
+                mat_a = [item.replace('Eneg', 'E-') for item in mat_a]
+
+                Position0 = [mat_x[0], mat_v[0], mat_a[0]]
+                Position0 = [float(i) for i in Position0]
+
+                Velocity0 = [mat_x[1], mat_v[1], mat_a[1]]
+                Velocity0 = [float(i) for i in Velocity0]
+
+                Acceleration0 = [mat_x[2], mat_v[2], mat_a[2]]
+                Acceleration0 = [float(i) for i in Acceleration0]
+
+                for time in range(curr_time, end_time, step_time):
+
+                    self.direc = "future"
+
+                    res2, self.time_row = self.midle_func(self.time_row, time)
+
+                    if res2 == 1:
+
+                        next_Position, next_Velocity, Acceleration0 = range_kutta.check_multi(self.direc,
+                                                                                              Position0,
+                                                                                              Velocity0,
+                                                                                              Acceleration0)
+
+                    else:
+
+                        next_Position, next_Velocity, Acceleration0 = range_kutta.check_multi(self.direc, Position0,
+                                                                                              Velocity0,
+                                                                                              Acceleration0)
+
+                        self.rinex_parser(time, sv_name, sv_date, next_Position, next_Velocity,
+                                          Acceleration0, sv_others, infos, self.new_rinex)
+
 
     def rinex_parser(self, time, sv_name, sv_date, position, velocity, acceleration, sv_others, infos,
                      rinex_f):
@@ -761,8 +875,12 @@ class MainWindow(QtWidgets.QMainWindow):
             string_str3 = " " + str(sv_other_3)
 
             if self.rinex_version == "2.01":
+                string_name_0 = len(sv_name)
 
                 if int(sv_name) >= 10:
+                    string_name = str(sv_name)
+
+                if string_name_0 == 2:
                     string_name = str(sv_name)
 
                 if int(sv_month) >= 10:
@@ -776,9 +894,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if self.rinex_version == "2.11":
                 string_name = str(sv_name)
-
-                if int(sv_name) < 10:
+                string_name_1 = len(sv_name)
+                if int(sv_name) < 10 and string_name_1 == 1:
                     string_name = " " + str(sv_name)
+                elif string_name_1 == 2:
+                    string_name = str(sv_name)
 
                 if int(sv_month) >= 10:
                     string_month = " " + str(sv_month)
