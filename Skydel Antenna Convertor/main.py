@@ -234,7 +234,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.menubar_layout.addItem(spacerItem0)
         # self.menubar_layout.addWidget(self.multi_freq_details, 1)
         # self.menubar_layout.addWidget(self.multi_freq_group, 1)
-
         # self.menubar_layout.addWidget(self.frame1, 3)
         self.menubar_layout.addItem(self.spacerItem01)
         self.menubar_layout.addWidget(self.title_std_details, 2)
@@ -825,7 +824,6 @@ class MainWindow(QtWidgets.QMainWindow):
             print("Path save here:", save_file_path_2)
             self.file_save_path_2.setText(save_file_path_2)
             self.file_save_path_2.setEnabled(True)
-
         else:
             QMessageBox.about(self, ".csv File conversion error", "No path found")
 

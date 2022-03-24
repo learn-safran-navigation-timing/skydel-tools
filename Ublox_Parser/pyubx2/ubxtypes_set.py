@@ -1036,6 +1036,7 @@ UBX_PAYLOADS_SET = {
     # number of formats. Additionally, status flags and accuracy figures are output. The messages are generated with
     # the configured navigation/measurement rate.
     "NAV-RESETODO": {},
+
     # ********************************************************************
     # Receiver Manager Messages: i.e. Satellite Status, RTC Status.
     # Messages in the RXM class are used to output status and result data from the Receiver Manager. The output

@@ -87,6 +87,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.csv_list_5 = []
         self.csv_list_6 = []
         self.csv_list_7 = []
+        self.csv_list_8 = []
 
         self.testfname = ""
         self.save_folder = ""
@@ -266,13 +267,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ubx_1 = QCheckBox('RXM-RAWX')
         self.ubx_2 = QCheckBox('NAV-PVT')
         self.ubx_3 = QCheckBox('NAV-POSECEF')
+        self.ubx_5 = QCheckBox('NAV-TIMEGPS')
         self.ubx_4 = QCheckBox('ALL')
+
         self.ubx_4.setChecked(True)
 
         self.ubx_1.stateChanged.connect(self.msg_type_handler)
         self.ubx_2.stateChanged.connect(self.msg_type_handler)
         self.ubx_3.stateChanged.connect(self.msg_type_handler)
         self.ubx_4.stateChanged.connect(self.msg_type_handler)
+        self.ubx_5.stateChanged.connect(self.msg_type_handler)
 
         ubx_msg_group = QGroupBox("UBX/NMEA Message")
         ubx_msg_group.setFont(QFont('Arial', 9))
@@ -282,6 +286,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ubx_msg_layout.addWidget(self.ubx_1, 1)
         ubx_msg_layout.addWidget(self.ubx_2, 1)
         ubx_msg_layout.addWidget(self.ubx_3, 1)
+        ubx_msg_layout.addWidget(self.ubx_5, 1)
         ubx_msg_layout.addWidget(self.ubx_4, 1)
 
         spacerItem = QtWidgets.QSpacerItem(102, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -403,7 +408,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.move(qtRectangle.topLeft())
 
     def show_about(self):
-        print("About")
         self.about = Ui_AboutDialog()
         self.about.show()
 
@@ -446,8 +450,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 if self.save_folder == "":
 
                     self.save_folder = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-                    print("Saving:", self.running_stop, self.serial_running)
-                    print(self.save_folder)
                     self.refresh_text_box_2("\n")
                     self.refresh_text_box_2("CSV FILE SAVED HERE:")
                     self.refresh_text_box_2(self.save_folder)
@@ -630,6 +632,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ubx_1.setEnabled(True)
             self.ubx_2.setEnabled(True)
             self.ubx_3.setEnabled(True)
+            self.ubx_5.setEnabled(True)
 
     # def rxm_rawx(self, state):
     #     if QtCore.Qt.Checked == state:
@@ -755,7 +758,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     else:
                         print("SURELY A MESSAGE FROM THE MOON")
-                    print('UBR:', ubr)
+                    #print('UBR:', ubr)
 
                     for (raw_data, self.parsed_data) in ubr:
 
@@ -768,25 +771,31 @@ class MainWindow(QtWidgets.QMainWindow):
                                 if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-PVT':
                                     self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                     self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                    print(self.parsed_data)
 
                             elif self.ubx_1.isChecked() and self.ubx_3.isChecked():
                                 if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-POSECEF':
                                     self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                     self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                    print(self.parsed_data)
+
+                            elif self.ubx_1.isChecked() and self.ubx_5.isChecked():
+                                if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-TIMEGPS':
+                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
 
                             elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
                                 if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-POSECEF':
                                     self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                     self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                    print(self.parsed_data)
 
-                            # elif self.ubx_2.isChecked():
-                            #     if self.parsed_data.identity == 'NAV-PVT':
-                            #         self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                            #         self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                            #         print(self.parsed_data)
+                            elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
+                                if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-TIMEGPS':
+                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+
+                            elif self.ubx_5.isChecked():
+                                if self.parsed_data.identity == 'NAV-TIMEGPS':
+                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
                             #
                             # elif self.ubx_3.isChecked():
                             #     if self.parsed_data.identity == 'NAV-POSECEF':
@@ -799,7 +808,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
 
-                                print(self.parsed_data)
+                                #print(self.parsed_data)
 
                             if self.save_checkbox.isChecked():
                                 print("Saving CSV")
@@ -839,19 +848,26 @@ class MainWindow(QtWidgets.QMainWindow):
                             if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-PVT':
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                print(self.parsed_data)
+                                #print(self.parsed_data)
 
                         elif self.ubx_1.isChecked() and self.ubx_3.isChecked():
                             if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-POSECEF':
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                print(self.parsed_data)
+                                #print(self.parsed_data)
 
                         elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
                             if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-POSECEF':
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                print(self.parsed_data)
+                                #print(self.parsed_data)
+
+                        elif self.ubx_5.isChecked():
+                            if self.parsed_data.identity == 'NAV-TIMEGPS':
+                                self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+                                #print(self.parsed_data)
+
                         # elif self.ubx_2.isChecked():
                         #     if self.parsed_data.identity == 'NAV-PVT':
                         #         self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
@@ -867,7 +883,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         elif self.ubx_4.isChecked():
                             self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                             self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                            print(self.parsed_data)
+                            #print(self.parsed_data)
 
                         if self.save_checkbox.isChecked():
                             print("Saving CSV")
@@ -887,7 +903,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def save_parsed_data(self, parsed_data):
 
-        print(parsed_data)
 
         if self.ubx_1.isChecked():
             if parsed_data.identity == 'RXM-RAWX':
@@ -900,14 +915,12 @@ class MainWindow(QtWidgets.QMainWindow):
                         gnss_message_id_number = getattr(parsed_data, gnss_message_id)
                         gnss_name = GNSSLIST[gnss_message_id_number]
                         if gnss_name == "GPS":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_0' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_0' + str(gnss_id)
                             gnss_sig_id_name = GPSSIGLIST[getattr(parsed_data, gnss_sig_id)]
                             csv_name_1 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
                                 gnss_sv_id_name) + ".csv"
-                            print(csv_name_1)
                             # rcvTow_id = 'prMes_0' + str(gnss_id)
                             # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
                             #
@@ -945,7 +958,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_0' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_0' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -972,7 +984,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                         if gnss_name == "Galileo":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_0' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -1009,7 +1020,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_0' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_0' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -1051,7 +1061,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         #         pass
 
                         if gnss_name == "GLONASS":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_0' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -1095,7 +1104,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_0' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_0' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -1122,7 +1130,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                         if gnss_name == "BeiDou":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_0' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -1131,7 +1138,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                 gnss_sv_id_name) + ".csv"
 
                         if gnss_name == "QZSS":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_0' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -1175,7 +1181,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_0' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_0' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -1207,7 +1212,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         gnss_name = GNSSLIST[gnss_message_id_number]
 
                         if gnss_name == "GPS":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -1251,7 +1255,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -1278,7 +1281,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                         if gnss_name == "Galileo":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -1322,7 +1324,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -1349,7 +1350,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                         if gnss_name == "GLONASS":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -1393,7 +1393,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -1435,7 +1434,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         #         pass
 
                         if gnss_name == "BeiDou":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -1479,7 +1477,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                             trkStat_id = 'trkStat_' + str(gnss_id)
                             trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                            print(trkStat_id_name)
 
                             reserved2_id = 'reserved2_' + str(gnss_id)
                             reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -1506,7 +1503,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                         if gnss_name == "QZSS":
-                            print(gnss_name)
                             gnss_sv_id = 'svId_' + str(gnss_id)
                             gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                             gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -1697,6 +1693,30 @@ class MainWindow(QtWidgets.QMainWindow):
                          'ecefY': parsed_data.ecefY,
                          'ecefZ': parsed_data.ecefZ, 'pAcc': parsed_data.pAcc
                          })
+
+        if self.ubx_5.isChecked():
+            if parsed_data.identity == "NAV-TIMEGPS":
+                fieldnames = ['iTOW (utc)', 'iTOW', 'fTOW', 'week', 'leapS']
+
+                csv_name_8 = self.save_folder + "/" + str(parsed_data.identity) + ".csv"
+                if not csv_name_8 in self.csv_list_8:
+                    self.csv_list_8.append(csv_name_8)
+                    self.csv_name_8_open = open(csv_name_8, 'a', newline='')
+                    csv_name_8_writer = csv.DictWriter(self.csv_name_8_open, fieldnames=fieldnames)
+                    csv_name_8_writer.writeheader()
+                    csv_name_8_writer.writerow(
+                        {'iTOW (utc)': itow2utc(parsed_data.iTOW), 'iTOW': parsed_data.iTOW, 'fTOW': parsed_data.fTOW,
+                         'week': parsed_data.week,
+                         'leapS': parsed_data.leapS})
+                else:
+                    self.csv_name_8_open = open(csv_name_8, 'a', newline='')
+                    csv_name_8_writer = csv.DictWriter(self.csv_name_8_open, fieldnames=fieldnames)
+                    csv_name_8_writer.writerow(
+                        {'iTOW (utc)': itow2utc(parsed_data.iTOW), 'iTOW': parsed_data.iTOW, 'fTOW': parsed_data.fTOW,
+                         'week': parsed_data.week,
+                         'leapS': parsed_data.leapS
+                         })
+
         # for msg_type in self.ubx_msg_class:
         #     if msg_type == 'RXM-RAWX':
         #         print('RXM-RAWX')
@@ -2781,8 +2801,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.ubx_4.isChecked():
             try:
                 if parsed_data.identity == 'RXM-RAWX':
-                    print(parsed_data.identity)
-                    print(parsed_data.msg_cls)
+
                     try:
                         num_message = parsed_data.numMeas
                         # if num_message == 0:
@@ -2795,14 +2814,12 @@ class MainWindow(QtWidgets.QMainWindow):
                             gnss_name = GNSSLIST[gnss_message_id_number]
                             id_msg = '0' + str(gnss_id)
                             if gnss_name == "GPS":
-                                print(gnss_name)
                                 gnss_sv_id = 'svId_0' + str(gnss_id)
                                 gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                 gnss_sig_id = 'sigId_0' + str(gnss_id)
                                 gnss_sig_id_name = GPSSIGLIST[getattr(parsed_data, gnss_sig_id)]
                                 csv_name_1 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
                                     gnss_sv_id_name) + ".csv"
-                                print(csv_name_1)
                                 # rcvTow_id = 'prMes_0' + str(gnss_id)
                                 # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
                                 #
@@ -2840,7 +2857,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 trkStat_id = 'trkStat_0' + str(gnss_id)
                                 trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                                print(trkStat_id_name)
 
                                 reserved2_id = 'reserved2_0' + str(gnss_id)
                                 reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -2867,7 +2883,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                             'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                             if gnss_name == "Galileo":
-                                print(gnss_name)
                                 gnss_sv_id = 'svId_0' + str(gnss_id)
                                 gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                 gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -2912,7 +2927,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 trkStat_id = 'trkStat_0' + str(gnss_id)
                                 trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                                print(trkStat_id_name)
 
                                 reserved2_id = 'reserved2_0' + str(gnss_id)
                                 reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -2953,7 +2967,6 @@ class MainWindow(QtWidgets.QMainWindow):
                             #     else:
                             #         pass
                             if gnss_name == "GLONASS":
-                                print(gnss_name)
                                 gnss_sv_id = 'svId_0' + str(gnss_id)
                                 gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                 gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -2997,7 +3010,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 trkStat_id = 'trkStat_0' + str(gnss_id)
                                 trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                                print(trkStat_id_name)
 
                                 reserved2_id = 'reserved2_0' + str(gnss_id)
                                 reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3024,7 +3036,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                             'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                             if gnss_name == "BeiDou":
-                                print(gnss_name)
                                 gnss_sv_id = 'svId_0' + str(gnss_id)
                                 gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                 gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -3068,7 +3079,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 trkStat_id = 'trkStat_0' + str(gnss_id)
                                 trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                                print(trkStat_id_name)
 
                                 reserved2_id = 'reserved2_0' + str(gnss_id)
                                 reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3095,7 +3105,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                             'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
                             if gnss_name == "QZSS":
-                                print(gnss_name)
                                 gnss_sv_id = 'svId_0' + str(gnss_id)
                                 gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                 gnss_sig_id = 'sigId_0' + str(gnss_id)
@@ -3139,7 +3148,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 trkStat_id = 'trkStat_0' + str(gnss_id)
                                 trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
-                                print(trkStat_id_name)
 
                                 reserved2_id = 'reserved2_0' + str(gnss_id)
                                 reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3148,8 +3156,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                               'freqId', 'locktime', 'cno']
                                 if not csv_name_5 in self.csv_list_5:
                                     self.csv_list_5.append(csv_name_5)
-                                    print(csv_name_5)
-                                    print(self.csv_list_5)
+
                                     with open(csv_name_5, 'a+', newline='') as file:
                                         writer = csv.DictWriter(file, fieldnames=fieldnames)
                                         writer.writeheader()
@@ -3320,7 +3327,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                 # #         pass
 
                                 if gnss_name == "GPS":
-                                    print(gnss_name)
                                     gnss_sv_id = 'svId_' + str(gnss_id)
                                     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                     gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -3369,7 +3375,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         trkStat_id = 'trkStat_' + str(gnss_id)
                                         trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
                                                                                 ubt.U1)
-                                        print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
                                         reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3402,7 +3407,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         print(err, getattr(parsed_data, gnss_sig_id))
 
                                 if gnss_name == "Galileo":
-                                    print(gnss_name)
                                     gnss_sv_id = 'svId_' + str(gnss_id)
                                     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                     gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -3452,7 +3456,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         trkStat_id = 'trkStat_' + str(gnss_id)
                                         trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
                                                                                 ubt.U1)
-                                        print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
                                         reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3500,7 +3503,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                     #         pass
 
                                 if gnss_name == "GLONASS":
-                                    print(gnss_name)
                                     gnss_sv_id = 'svId_' + str(gnss_id)
                                     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                     gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -3549,7 +3551,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         trkStat_id = 'trkStat_' + str(gnss_id)
                                         trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
                                                                                 ubt.U1)
-                                        print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
                                         reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3597,7 +3598,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                 #         pass
 
                                 if gnss_name == "BeiDou":
-                                    print(gnss_name)
                                     gnss_sv_id = 'svId_' + str(gnss_id)
                                     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                     gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -3646,7 +3646,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         trkStat_id = 'trkStat_' + str(gnss_id)
                                         trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
                                                                                 ubt.U1)
-                                        print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
                                         reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3679,7 +3678,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         print(err, getattr(parsed_data, gnss_sig_id))
 
                                 if gnss_name == "QZSS":
-                                    print(gnss_name)
                                     gnss_sv_id = 'svId_' + str(gnss_id)
                                     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
                                     gnss_sig_id = 'sigId_' + str(gnss_id)
@@ -3728,7 +3726,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                         trkStat_id = 'trkStat_' + str(gnss_id)
                                         trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id),
                                                                                 ubt.U1)
-                                        print(trkStat_id_name)
 
                                         reserved2_id = 'reserved2_' + str(gnss_id)
                                         reserved2_id_name = getattr(parsed_data, reserved2_id)
@@ -3834,6 +3831,30 @@ class MainWindow(QtWidgets.QMainWindow):
                             {'iTOW (utc)': itow2utc(parsed_data.iTOW), 'iTOW': parsed_data.iTOW,
                              'ecefX': parsed_data.ecefX, 'ecefY': parsed_data.ecefY,
                              'ecefZ': parsed_data.ecefZ, 'pAcc': parsed_data.pAcc
+                             })
+
+                if parsed_data.identity == "NAV-TIMEGPS":
+                    fieldnames = ['iTOW (utc)', 'iTOW', 'fTOW', 'week', 'leapS']
+                    csv_name_8 = self.save_folder + "/" + str(parsed_data.identity) + ".csv"
+                    if not csv_name_8 in self.csv_list_8:
+                        self.csv_list_8.append(csv_name_8)
+                        self.csv_name_8_open = open(csv_name_8, 'a', newline='')
+                        csv_name_8_writer = csv.DictWriter(self.csv_name_8_open, fieldnames=fieldnames)
+                        csv_name_8_writer.writeheader()
+                        csv_name_8_writer.writerow(
+                            {'iTOW (utc)': itow2utc(parsed_data.iTOW), 'iTOW': parsed_data.iTOW,
+                             'fTOW': parsed_data.fTOW,
+                             'week': parsed_data.week,
+                             'leapS': parsed_data.leapS
+                             })
+                    else:
+                        self.csv_name_8_open = open(csv_name_8, 'a', newline='')
+                        csv_name_8_writer = csv.DictWriter(self.csv_name_8_open, fieldnames=fieldnames)
+                        csv_name_8_writer.writerow(
+                            {'iTOW (utc)': itow2utc(parsed_data.iTOW), 'iTOW': parsed_data.iTOW,
+                             'fTOW': parsed_data.fTOW,
+                             'week': parsed_data.week,
+                             'leapS': parsed_data.leapS
                              })
 
                 # if parsed_data.identity == 'NAV-SIG':
@@ -5014,7 +5035,6 @@ class MainWindow(QtWidgets.QMainWindow):
         msg = UBXMessage('CFG', 'CFG-RST', SET, navBbrMask=b"\x00")
 
         # msg = UBXMessage('CFG', 'CFG-RST', SET, navBbrMask=0)
-        print(msg)
         output = msg.serialize()
         self.stream.write(output)
         self.serial_running = True
@@ -5051,7 +5071,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.stream.open()
 
         msg = UBXMessage('CFG', 'CFG-RST', SET, navBbrMask=b"\xff")
-        print(msg)
         print('cold start:', msg)
         output = msg.serialize()
         print("serial send:", output)
@@ -5061,10 +5080,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stream.close()
 
     def stop_streaming_func(self):
-        print("Stop Streaming")
         if self.running_mode == "SERIAL":
             self.stream.close()
-            print(" Close PORT COM")
         else:
             self.running_stop = False
 
