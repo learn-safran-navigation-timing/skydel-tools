@@ -811,7 +811,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def main_func_3(self, date_and_time, second, sat_visible, Sat_data_dict_0):
 
-        print("Main 3")
         """
         :param date_and_time: 
         :param second: 
@@ -825,40 +824,61 @@ class MainWindow(QtWidgets.QMainWindow):
         N = max(self.N_list)
 
         time_comp = 500
-        print(time_comp)
-
+        List_month_30 = [1, 4, 6, 9, 11]
+        List_month_31 = [3, 5, 7, 8, 10, 12]
+        
         for n in range(0, N, 1):
 
-            if second >= 60:
-                self.minute_count = self.minute_count + 1
-                self.time_change = datetime.timedelta(minutes=self.minute_count)
-                self.new_time = date_and_time + self.time_change
-                # self.minute_count = self.new_time.minute
-                self.hour_count = self.new_time.hour - 1
-                self.day_count = self.new_time.day
-                self.month_count = self.new_time.month
-                self.year_count = self.new_time.year
+            if int(second) >= 59.9:
+                                
+                if self.minute_count == 59:
+                    self.minute_count = 0
+                    self.hour_count = self.hour_count + 1
+                else:
+                    self.minute_count = self.minute_count + 1
 
-            if self.minute_count >= 60:
-                self.hour_count = self.hour_count + 1
-                self.time_change = datetime.timedelta(hours=self.hour_count)
-                self.new_time = date_and_time + self.time_change
-                self.minute_count = self.new_time.minute
+                # self.time_change = datetime.timedelta(minutes=self.minute_count)
+                # self.new_time = date_and_time + self.time_change
+                # self.minute_count = self.new_time.minute
                 # self.hour_count = self.new_time.hour
-                self.day_count = self.new_time.day
-                self.month_count = self.new_time.month
-                self.year_count = self.new_time.year
+                # self.day_count = self.new_time.day
+            # self.month_count = self.new_time.month
+            # self.year_count = self.new_time.year
+
+                # self.time_change = datetime.timedelta(hours=self.hour_count)
+                # self.new_time = date_and_time + self.time_change
+                # self.minute_count = self.new_time.minute
+                # self.hour_count = self.new_time.hour
+                # self.day_count = self.new_time.day
+                # self.month_count = self.new_time.month
+                # self.year_count = self.new_time.year
 
             if self.hour_count >= 24:
-                self.day_count = self.day_count + 1
-                self.time_change = datetime.timedelta(days=self.day_count)
-                self.new_time = date_and_time + self.time_change
-                self.minute_count = self.new_time.minute
-                self.hour_count = self.new_time.hour
-                # self.day_count = self.new_time.day
-                self.month_count = self.new_time.month
-                self.year_count = self.new_time.year
+                self.hour_count = int(self.hour_count) - 24
+                self.day_count = int(self.day_count) + 1
 
+            if int(self.day_count) == 30:
+                if int(self.month_count) in List_month_30:
+                    self.day_count = 1
+                    self.month_count = self.month_count + 1
+
+                    if int(self.month_count) >= 12:
+                        self.month_count = 1
+                        self.year_count = self.year_count + 1
+
+            if int(self.day_count) > 31:
+                if int(self.month_count) in List_month_31:
+                    self.day_count = 1
+                    self.month_count = self.month_count + 1
+
+                    if int(self.month_count) >= 12:
+                        self.month_count = 1
+                        self.year_count = self.year_count + 1
+
+            if int(self.day_count) == 28:
+                if int(self.month_count) == 2:
+                    self.month_count = self.month_count + 1
+    
             second = np.mod(second, 60)
             count_time_table_1 = 0
             self.count_line_sat_1 = 0
@@ -913,8 +933,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     table_time = Sat_data_dict_0["TIME"][count_time_table][n]
                     list_band.append(self.curr_sat)
 
-                    print(table_time)
-                    print(time_comp)
 
                     if int(table_time) == int(time_comp):
 
@@ -936,7 +954,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         tline = self.sat_rinex_code + "{:02d}".format(int(m)) + '  ' + '{:0<8.3f}'.format(
                             Sat_data_dict_0["PSR"][count_time_table][n]) + space_0 + '{:0<9.5f}'.format(
                             Sat_data_dict_0["ADR"][count_time_table][n])
-                        print(tline)
                         self.fid_w.write(tline)
                         self.fid_w.write('\n')
 
@@ -964,10 +981,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.N_list.append(N)
         N = max(self.N_list)
 
-        print(second)
         time_comp = 500
-        print(time_comp)
-
         list_band = []
         list_sat_2 = []
         list_sat_twin_2 = []
@@ -1008,37 +1022,62 @@ class MainWindow(QtWidgets.QMainWindow):
 
             list_sat_twin_2.append(sat_twin_2)
 
-        for n in range(N):
+        List_month_30 = [1, 4, 6, 9, 11]
+        List_month_31 = [3, 5, 7, 8, 10, 12]
 
-            if int(second) == 60:
-                self.minute_count = self.minute_count + 1
-                self.time_change = datetime.timedelta(minutes=self.minute_count)
-                self.new_time = date_and_time + self.time_change
-                self.minute_count = self.new_time.minute
-                self.hour_count = self.new_time.hour
-                self.day_count = self.new_time.day
-                self.month_count = self.new_time.month
-                self.year_count = self.new_time.year
+        for n in range(0, N, 1):
 
-            if self.minute_count >= 60:
-                self.hour_count = self.hour_count + 1
-                self.time_change = datetime.timedelta(hours=self.hour_count)
-                self.new_time = date_and_time + self.time_change
-                self.minute_count = self.new_time.minute
-                self.hour_count = self.new_time.hour
-                self.day_count = self.new_time.day
-                self.month_count = self.new_time.month
-                self.year_count = self.new_time.year
+            if int(second) >= 59.9:
+                                
+                if self.minute_count == 59:
+                    self.minute_count = 0
+                    self.hour_count = self.hour_count + 1
+                else:
+                    self.minute_count = self.minute_count + 1
+
+
+                # self.time_change = datetime.timedelta(minutes=self.minute_count)
+                # self.new_time = date_and_time + self.time_change
+                # self.minute_count = self.new_time.minute
+                # self.hour_count = self.new_time.hour
+                # self.day_count = self.new_time.day
+            # self.month_count = self.new_time.month
+            # self.year_count = self.new_time.year
+
+                
+                # self.time_change = datetime.timedelta(hours=self.hour_count)
+                # self.new_time = date_and_time + self.time_change
+                # self.minute_count = self.new_time.minute
+                # self.hour_count = self.new_time.hour
+                # self.day_count = self.new_time.day
+                # self.month_count = self.new_time.month
+                # self.year_count = self.new_time.year
 
             if self.hour_count >= 24:
+                self.hour_count = self.hour_count - 24
                 self.day_count = self.day_count + 1
-                self.time_change = datetime.timedelta(days=self.day_count)
-                self.new_time = date_and_time + self.time_change
-                self.minute_count = self.new_time.minute
-                self.hour_count = self.new_time.hour
-                self.day_count = self.new_time.day
-                self.month_count = self.new_time.month
-                self.year_count = self.new_time.year
+
+            if int(self.day_count) == 30:
+                if int(self.month_count) in List_month_30:
+                    self.day_count = 1
+                    self.month_count = self.month_count + 1
+
+                    if int(self.month_count) >= 12:
+                        self.month_count = 1
+                        self.year_count = self.year_count + 1
+
+            if int(self.day_count) > 31:
+                if int(self.month_count) in List_month_31:
+                    self.day_count = 1
+                    self.month_count =self.month_count + 1
+
+                    if int(self.month_count) >= 12:
+                        self.month_count = 1
+                        self.year_count = self.year_count + 1
+
+            if int(self.day_count) == 28:
+                if int(self.month_count) == 2:
+                    self.month_count = self.month_count + 1
 
             second = np.mod(second, 60)
 
@@ -1311,8 +1350,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if int(count_line_sat_0) == int(count_line_sat_2):
                 print("ok")
-            else:
-                print("Pas bon")
 
 
 if __name__ == '__main__':
@@ -1321,4 +1358,5 @@ if __name__ == '__main__':
     qtmodern.styles.dark(app)
     mw = qtmodern.windows.ModernWindow(w)
     mw.show()
+    w.show()
     app.exec_()
