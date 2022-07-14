@@ -1,9 +1,7 @@
 """
 SROG: Skydel Rinex Observation Generator
 GENERATOR of Rinex Observation from Skydel Raw DATA - Main QT application class.
-
 Created on 16 06 2021
-
 :author: Grace Oulai
 :copyright: Skydel © 2021
 :Version: 21.6.1
@@ -657,23 +655,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onsatchanged1(self, text):
         """
-
-        :param text: 
+        :param text:
         """
         self.sat_id = text
 
     def onsatchanged2(self, text):
         """
-
-        :param text: 
+        :param text:
         """
         self.band_id = text
 
     def write_header(self, second, second_0):
         """
-
-        :param second: 
-        :param second_0: 
+        :param second:
+        :param second_0:
         """
         with open(self.header_name) as handler:
 
@@ -730,10 +725,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def main_func_2(self, sat_visible, path):
         """
-
-        :param sat_visible: 
-        :param path: 
-        :return: 
+        :param sat_visible:
+        :param path:
+        :return:
         """
         lines = []
 
@@ -812,10 +806,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def main_func_3(self, date_and_time, second, sat_visible, Sat_data_dict_0):
 
         """
-        :param date_and_time: 
-        :param second: 
-        :param sat_visible: 
-        :param Sat_data_dict_0: 
+        :param date_and_time:
+        :param second:
+        :param sat_visible:
+        :param Sat_data_dict_0:
         """
 
         for k in range(0, len(Sat_data_dict_0["T_SAT"]), 1):
@@ -826,11 +820,11 @@ class MainWindow(QtWidgets.QMainWindow):
         time_comp = 500
         List_month_30 = [1, 4, 6, 9, 11]
         List_month_31 = [3, 5, 7, 8, 10, 12]
-        
+
         for n in range(0, N, 1):
 
             if int(second) >= 59.9:
-                                
+
                 if self.minute_count == 59:
                     self.minute_count = 0
                     self.hour_count = self.hour_count + 1
@@ -845,13 +839,13 @@ class MainWindow(QtWidgets.QMainWindow):
             # self.month_count = self.new_time.month
             # self.year_count = self.new_time.year
 
-                # self.time_change = datetime.timedelta(hours=self.hour_count)
-                # self.new_time = date_and_time + self.time_change
-                # self.minute_count = self.new_time.minute
-                # self.hour_count = self.new_time.hour
-                # self.day_count = self.new_time.day
-                # self.month_count = self.new_time.month
-                # self.year_count = self.new_time.year
+            # self.time_change = datetime.timedelta(hours=self.hour_count)
+            # self.new_time = date_and_time + self.time_change
+            # self.minute_count = self.new_time.minute
+            # self.hour_count = self.new_time.hour
+            # self.day_count = self.new_time.day
+            # self.month_count = self.new_time.month
+            # self.year_count = self.new_time.year
 
             if self.hour_count >= 24:
                 self.hour_count = int(self.hour_count) - 24
@@ -878,7 +872,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if int(self.day_count) == 28:
                 if int(self.month_count) == 2:
                     self.month_count = self.month_count + 1
-    
+
             second = np.mod(second, 60)
             count_time_table_1 = 0
             self.count_line_sat_1 = 0
@@ -963,9 +957,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
             time_comp = time_comp + 100
 
-    def main_func_4(self, date_and_time, second, sat_visible_1, sat_visible_2, Sat_data_dict_1, Sat_data_dict_2)
+    def main_func_4(self, date_and_time, second, sat_visible_1, sat_visible_2, Sat_data_dict_1, Sat_data_dict_2):
         """
-
         :param date_and_time:
         :param second:
         :param sat_visible_1:
@@ -1027,13 +1020,12 @@ class MainWindow(QtWidgets.QMainWindow):
         for n in range(0, N, 1):
 
             if int(second) >= 59.9:
-                                
+
                 if self.minute_count == 59:
                     self.minute_count = 0
                     self.hour_count = self.hour_count + 1
                 else:
                     self.minute_count = self.minute_count + 1
-
 
                 # self.time_change = datetime.timedelta(minutes=self.minute_count)
                 # self.new_time = date_and_time + self.time_change
@@ -1043,14 +1035,13 @@ class MainWindow(QtWidgets.QMainWindow):
             # self.month_count = self.new_time.month
             # self.year_count = self.new_time.year
 
-                
-                # self.time_change = datetime.timedelta(hours=self.hour_count)
-                # self.new_time = date_and_time + self.time_change
-                # self.minute_count = self.new_time.minute
-                # self.hour_count = self.new_time.hour
-                # self.day_count = self.new_time.day
-                # self.month_count = self.new_time.month
-                # self.year_count = self.new_time.year
+            # self.time_change = datetime.timedelta(hours=self.hour_count)
+            # self.new_time = date_and_time + self.time_change
+            # self.minute_count = self.new_time.minute
+            # self.hour_count = self.new_time.hour
+            # self.day_count = self.new_time.day
+            # self.month_count = self.new_time.month
+            # self.year_count = self.new_time.year
 
             if self.hour_count >= 24:
                 self.hour_count = self.hour_count - 24
@@ -1068,7 +1059,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if int(self.day_count) > 31:
                 if int(self.month_count) in List_month_31:
                     self.day_count = 1
-                    self.month_count =self.month_count + 1
+                    self.month_count = self.month_count + 1
 
                     if int(self.month_count) >= 12:
                         self.month_count = 1
