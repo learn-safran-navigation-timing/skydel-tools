@@ -933,7 +933,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     table_time = Sat_data_dict_0["TIME"][count_time_table][n]
                     list_band.append(self.curr_sat)
 
-
                     if int(table_time) == int(time_comp):
 
                         band_0 = '{:0<9.5f}'.format(Sat_data_dict_0["ADR"][count_time_table][n])
@@ -964,7 +963,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             time_comp = time_comp + 100
 
-    def main_func_4(self, date_and_time, second, sat_visible_1, sat_visible_2, Sat_data_dict_1, Sat_data_dict_2):
+    def main_func_4(self, date_and_time, second, sat_visible_1, sat_visible_2, Sat_data_dict_1, Sat_data_dict_2)
         """
 
         :param date_and_time:

@@ -3,7 +3,7 @@ import csv
 import os
 import shutil
 import pandas as pd
-
+import re
 
 class RinexReader:
 
@@ -78,24 +78,40 @@ class RinexReader:
 
             sv_infos = new_lines[j: j + 4]
 
-            sv_date = sv_infos[0]
+            if "R" in sv_infos[0]:
+                str_sv = str(sv_infos[0])
+                sv_name = str_sv[:3]
+                sv_name = sv_name.replace(" ", "")
+                sv_name = re.split('(\d+)', sv_name)
+                sv_name = sv_name[1]
+
+                sv_date = str(sv_infos[0])
+                sv_date = sv_date[3:]
+
+            else:
+                str_sv = str(sv_infos[0])
+                sv_name = str_sv[:3]
+                sv_name = sv_name.replace(" ", "")
+
+                sv_date = str(sv_infos[0])
+                sv_date = sv_date[3:]
+
             sv_date = sv_date.replace('e', 'E')
             sv_date = sv_date.replace('D', 'E')
             sv_date = sv_date.replace('E-', 'Eneg').replace('-', ' -').split()
             sv_date = [item.replace('Eneg', 'E-') for item in sv_date]
 
-            sv_name = sv_date[0]
+            sv_year = sv_date[0]
+            sv_month = sv_date[1]
+            sv_day = sv_date[2]
+            sv_hour = sv_date[3]
+            sv_minutes = sv_date[4]
+            sv_secondes = sv_date[5]
+            sv_clock_bias = sv_date[6]
+            sv_freq_draft = sv_date[7]
+            sv_frame_time = sv_date[8]
 
-            csv_name = self.path + "\\" + sv_name + ".csv"
-            sv_year = sv_date[1]
-            sv_month = sv_date[2]
-            sv_day = sv_date[3]
-            sv_hour = sv_date[4]
-            sv_minutes = sv_date[5]
-            sv_secondes = sv_date[6]
-            sv_clock_bias = sv_date[7]
-            sv_freq_draft = sv_date[8]
-            sv_frame_time = sv_date[9]
+            csv_name = self.path + "\\" + str(sv_name) + ".csv"
 
             sv_x = sv_infos[1]
             sv_x = sv_x.replace('e', 'E')
