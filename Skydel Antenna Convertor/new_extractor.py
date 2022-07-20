@@ -32,7 +32,7 @@ class NewAntReader:
         phi_sample, = np.char.split(phi_sample)
         phi_sample = phi_sample[4]
 
-        data = pd.read_csv(fileName, error_bad_lines=False, delim_whitespace=True, skiprows=lineSkip - 1)
+        data = pd.read_csv(fileName, on_bad_lines='skip', delim_whitespace=True, skiprows=lineSkip - 1)
         occurrences = np.count_nonzero(data == '#Frequency:')
         return occurrences, data, freq1, theta_sample, phi_sample
 
@@ -78,7 +78,7 @@ class NewAntReader:
         gain_total = np.empty(1000, dtype=object)
         line_skip = np.empty(1000, dtype=object)
 
-        data = pd.read_csv(fileName, error_bad_lines=False, delim_whitespace=True, skiprows=lineSkip - 1, header=None)
+        data = pd.read_csv(fileName, on_bad_lines="skip", delim_whitespace=True, skiprows=lineSkip - 1, header=None)
         occurrences = np.count_nonzero(data == '#Frequency:')
         if occurrences == 1:
             theta = np.array(data.iloc[:, 0], dtype=np.float64,

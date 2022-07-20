@@ -89,6 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.csv_col = int()
         self.theta_2 = np.empty(1000, dtype=object)
         self.pas_azimuth_2 = np.empty(1000, dtype=object)
+        self.view_type = int()
         # Menubar
         self.setStyleSheet("""QToolTip {
                                    background-color: #232b2b;

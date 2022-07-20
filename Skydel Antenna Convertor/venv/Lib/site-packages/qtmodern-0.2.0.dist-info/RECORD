@@ -1,0 +1,17 @@
+qtmodern-0.2.0.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+qtmodern-0.2.0.dist-info/LICENSE,sha256=NNi8lAaX1zwRG1LVxpUVFRJixGKljpzE74xG6y2I2O4,1124
+qtmodern-0.2.0.dist-info/METADATA,sha256=5GeE2lrIYW2ZLhXtQWGa7b5EMTeuYAIBgrpvM_f5tbQ,1866
+qtmodern-0.2.0.dist-info/RECORD,,
+qtmodern-0.2.0.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+qtmodern-0.2.0.dist-info/WHEEL,sha256=P3qJ5yBP-M5n4VbrgU3eTDIHvegviaBxiqCi1ejHWOs,97
+qtmodern-0.2.0.dist-info/top_level.txt,sha256=m4Fy89ylQQxHWEFxuf7YNGb6VpRajVi2-k3fBfRC_1o,9
+qtmodern/__init__.py,sha256=HAgtxj9CfrfC0EIf6nyipmuF-3oDWw9wpW48R5pCFIY,54
+qtmodern/__pycache__/__init__.cpython-39.pyc,,
+qtmodern/__pycache__/_utils.cpython-39.pyc,,
+qtmodern/__pycache__/styles.cpython-39.pyc,,
+qtmodern/__pycache__/windows.cpython-39.pyc,,
+qtmodern/_utils.py,sha256=GO3reBHicL1cw1MoegPqiZAdFr_46XjkVQr5z-u5Bas,156
+qtmodern/resources/frameless.qss,sha256=B59kntum8Ems4gZM2m4uQ0udrya_LJHmfWPbhYO-fRw,1087
+qtmodern/resources/style.qss,sha256=KVDsHIF6CL549LhXv6LGuPpWE4bURMz8g-mq8vIIu7A,2504
+qtmodern/styles.py,sha256=K43MdDJyB46u2BvymHuA1qAOjVSDx4ve-wbYjRABG-4,4585
+qtmodern/windows.py,sha256=_B-CRx50agHxB05blsGiDmm_OF1xoKHt3Yd_2f59-5g,6368
