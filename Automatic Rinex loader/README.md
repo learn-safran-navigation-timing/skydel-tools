@@ -12,7 +12,7 @@ Please refer to the [README](skydel-tools/Automatic%20Rinex%20loader/FTP%20Websi
 
 This script enables you to download RINEX files from a SecureSync server. It uses the provided authentication information to connect to the server, browse available files, and download the desired RINEX files. Details on configuring the authentication information and using the script are available in the associated README file.
 
-Please refer to the [README](Automatic Rinex loader/SecureSync/README.md) file for detailed instructions on using the download script via SecureSync.
+Please refer to the [README](Automatic%20Rinex%20loader/SecureSync/README.md) file for detailed instructions on using the download script via SecureSync.
 
 ## Requirements
 
