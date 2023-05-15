@@ -39,6 +39,7 @@ Before running the script, make sure to configure the following settings:
 ## Running the Script
 1. Open a command prompt window, navigate your python script by typing “cd [.py folder location]”, and press Enter.
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/0c847f68-392f-48fa-b71f-dd2619af68e0)
+
 N.B: The directory should be the folder location of all python script examples provided by Skydel, as well as any python scripts that were created to automate testing. Note: If new folders are made for the python script, then the imports in the python script may need to be updated. Type “python [script name]” and press Enter to execute the python script.
 
 2. The script will then run and the files will be downloaded to the directory where the script is saved.
@@ -46,6 +47,7 @@ N.B: The directory should be the folder location of all python script examples p
 
 
 3. On Skydel, we find that the files are successfully imported
+
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/ff0d2eab-9919-4030-968f-8321736ef234)
 
 
