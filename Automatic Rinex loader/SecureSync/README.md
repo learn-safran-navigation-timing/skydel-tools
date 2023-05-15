@@ -45,7 +45,7 @@ cd “path of script”
 
 N.B: The directory should be the folder location of all python script examples provided by Skydel, as well as any python scripts that were created to automate testing.
 Note: If new folders are made for the python script, then the imports in the python script may need to be updated. 
-2. Run the script
+2. Run the script :
 Type “python [script name]” and press Enter to execute the python script.
 
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/c928305f-8523-499e-b53b-df0e95ab7899)
