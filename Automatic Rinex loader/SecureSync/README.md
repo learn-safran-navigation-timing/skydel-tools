@@ -39,23 +39,31 @@ To use this tool, follow these steps:
 ## Run the Script 
 1. Next, download the script and save it to a directory on your computer. In the terminal window, navigate to the directory where the script is located. To do this, use the cd command followed by the path to the directory. For example:
 cd “path of script”
+
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/d86c0a0e-5276-480e-a2ee-b1973c8a5718)
+
 N.B: The directory should be the folder location of all python script examples provided by Skydel, as well as any python scripts that were created to automate testing.
 Note: If new folders are made for the python script, then the imports in the python script may need to be updated. 
 2. Run the script
 Type “python [script name]” and press Enter to execute the python script.
+
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/c928305f-8523-499e-b53b-df0e95ab7899)
+
 When you run the script, it will prompt you to enter the hostname, username, and password for the SecureSync that you want to connect to. Enter this information and press Enter.
 The script will then connect to the SecureSync and show you the date and constellations that were used in the scenario that you created in Skydel. It will prompt you to enter the file type (daily or hourly) that you want to download. Enter 'daily' or 'hourly' depending on the type of file you want to download.
+
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/d5776129-114f-4b6d-b1da-79816442614d)
+
 The script will then download the appropriate RINEX file based on the information entered in the Skydel scenario. The file will be saved to the same directory as the script.
 
 Finally, the script will import the downloaded RINEX file into Skydel for use in simulations.
+
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/3c18cc06-b2de-41bf-9963-7273005be8e8)
 
 3. check on Skydel
 Now, on Skydel, we can see that the RINEX files are well downloaded and imported in Skydel.
 Note: if we want to find the RINEX files, we find them in the same folder as the saved script python file. for example, in my case, the files are saved here:
+
 ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/b2eac8d1-1e19-49f4-8ac3-9bac2c0cd3e9)
 
 
