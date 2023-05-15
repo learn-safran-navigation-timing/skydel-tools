@@ -16,6 +16,7 @@ To use this tool, you will need to have the following installed:
   To check if python is installed, type in your command prompt : python --version.
   
   ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/0cbede78-fdfe-419d-b430-734926a9ce9e)
+  
   here, we have python version 3.10.4 installed. 
 
 - Paramiko: This script uses Paramiko library to create SSH connections. You can install Paramiko using pip with the following command:
