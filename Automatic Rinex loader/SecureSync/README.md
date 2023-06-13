@@ -29,7 +29,7 @@ To use this tool, you will need to have the following installed:
   sudo add-apt-repository ppa:deadsnakes/ppa
   sudo apt-get install python3.8
   
--Then, you'll be able to run the script using :
+- Then, you'll be able to run the script using :
   python3.8 your_script_in_python_3.8.py
 
 
