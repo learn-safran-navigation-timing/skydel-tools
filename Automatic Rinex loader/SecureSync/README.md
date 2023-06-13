@@ -25,6 +25,14 @@ To use this tool, you will need to have the following installed:
   ![image](https://github.com/learn-safran-navigation-timing/skydel-tools/assets/77835495/fa96414d-38c8-4c6b-8ccb-c0053945bdda)
 
 
+- If you want to run the script on a GSG-8 unit, use the following command to update your Python version to 3.8:
+  sudo add-apt-repository ppa:deadsnakes/ppa
+  sudo apt-get install python3.8
+  
+-Then, you'll be able to run the script using :
+  python3.8 your_script_in_python_3.8.py
+
+
 
 ## Usage
 
