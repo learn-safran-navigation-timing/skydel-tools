@@ -1,0 +1,10 @@
+PyQt5~=5.15.9
+qtmodern~=0.2.0
+numpy~=1.24.2
+Pillow~=9.4.0
+pip~=22.3.1
+QtPy~=2.3.0
+setuptools~=65.5.1
+scipy~=1.10.1
+matplotlib~=3.7.1
+pynema2~=1.19.0
