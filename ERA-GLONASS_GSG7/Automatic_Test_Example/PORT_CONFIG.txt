@@ -1,0 +1,17 @@
+# DUT port name
+PortName = COM3
+ 
+# Data baud rate of the serial port (1200 / 2400 / 4800 / 9600 / 19200 / 38400 / 57600 / 115200 / 460800)
+BaudRate = 9600
+ 
+# Number of data bits used by the serial port (from 5 to 8)
+DataBits = 8
+ 
+# Parity scheme used by the serial port (0 : NoParity / 1 : Even / 2 : Odd / 3 : Space / 4 : Mark)
+Parity = 0
+ 
+# Number of stop bits used by the serial port (1 / 2)
+StopBits = 1
+ 
+# Flow control used by the serial port (0 : NoFlowControl / 1 : Hardware / 2 : Software)
+FlowControl = 0

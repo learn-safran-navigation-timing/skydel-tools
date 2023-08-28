@@ -390,7 +390,7 @@ class MainWindow(QtWidgets.QMainWindow):
         sim = RemoteSimulator(True)
         sim.connect()
         sim.call(New(True, True))
-        sim.call(SaveAs("C:/Users/Jean-GraceOulai/Documents/Skydel-SDX/Configurations/test_automation.py", True))
+        #sim.call(SaveAs("C:/Users/Jean-GraceOulai/Documents/Skydel-SDX/Configurations/test_automation.py", True))
         sim.call(SetModulationTarget("NoneRT", "", "", True, "{d3c0efea-6689-426c-909a-792afc0c732b}"))
         sim.call(ChangeModulationTargetSignals(0, 1250000, 100000000, "UpperL", "L1CA", 0, False,
                                                "{d3c0efea-6689-426c-909a-792afc0c732b}", None))
