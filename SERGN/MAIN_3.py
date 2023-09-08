@@ -1667,11 +1667,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.header_info_1 = self.header_infos[0]
         self.header_info_1 = self.header_info_1.split()
         self.rinex_version = self.header_info_1[0]
-        print(self.rinex_version)
 
         sv_name = sv_name
         sv_year = sv_date[0]
-        print(sv_date[0])
 
         sv_real_year = sv_year
 
@@ -1798,9 +1796,6 @@ class MainWindow(QtWidgets.QMainWindow):
             sv_minutes = "{:02d}".format(int(sv_minutes))
             sv_secondes = "{:02d}".format(int(sv_secondes))
             sv_day = "{:02d}".format(int(sv_day))
-
-            print(sv_year)
-            print(sv_real_year)
 
             string_date = str(sv_name) + " " + str(sv_real_year) + " " + str(sv_month) + " " + str(
                 sv_day) + " " + sv_hour + " " + str(sv_minutes) + " " + str(sv_secondes) + " " + str(

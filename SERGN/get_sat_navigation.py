@@ -80,28 +80,22 @@ class RinexReader:
 
             if "R" in sv_infos[0]:
                 str_sv = str(sv_infos[0])
-                print(str_sv)
                 sv_name = str_sv[:3]
-                print(sv_name)
 
                 sv_name = sv_name.replace(" ", "")
                 sv_real_name = sv_name
                 sv_name = re.split('(\d+)', sv_name)
                 sv_name = sv_name[1]
 
-                print(sv_name)
 
                 sv_date = str(sv_infos[0])
                 sv_date = sv_date[3:]
 
             else:
                 str_sv = str(sv_infos[0])
-                print(str_sv)
                 sv_name = str_sv[:3]
-                print(sv_name)
 
                 sv_name = sv_name.replace(" ", "")
-                print(sv_name)
                 sv_real_name = sv_name
 
 
