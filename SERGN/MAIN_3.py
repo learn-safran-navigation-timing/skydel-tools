@@ -1659,14 +1659,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def rinex_parser(self, time, sv_name, sv_date, position, velocity, acceleration, sv_others, infos,
                      rinex_f):
 
-        f = open(rinex_f, "a")
+        try:
+            f = open(rinex_f, "a")
+        except PermissionError as perm_err_1:
+            print(perm_err_1)
 
         self.header_info_1 = self.header_infos[0]
         self.header_info_1 = self.header_info_1.split()
         self.rinex_version = self.header_info_1[0]
+        print(self.rinex_version)
 
         sv_name = sv_name
         sv_year = sv_date[0]
+        print(sv_date[0])
+
+        sv_real_year = sv_year
 
         if len(str(sv_year)) == 4:
             sv_year = sv_year.split("0")
@@ -1791,7 +1798,11 @@ class MainWindow(QtWidgets.QMainWindow):
             sv_minutes = "{:02d}".format(int(sv_minutes))
             sv_secondes = "{:02d}".format(int(sv_secondes))
             sv_day = "{:02d}".format(int(sv_day))
-            string_date = str(sv_name) + " " + str(sv_year) + " " + str(sv_month) + " " + str(
+
+            print(sv_year)
+            print(sv_real_year)
+
+            string_date = str(sv_name) + " " + str(sv_real_year) + " " + str(sv_month) + " " + str(
                 sv_day) + " " + sv_hour + " " + str(sv_minutes) + " " + str(sv_secondes) + " " + str(
                 sv_other_1) + " " + str(sv_other_2) + " " + str(sv_other_3) + "\n"
 

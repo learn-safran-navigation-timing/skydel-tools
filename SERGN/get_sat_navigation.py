@@ -80,18 +80,30 @@ class RinexReader:
 
             if "R" in sv_infos[0]:
                 str_sv = str(sv_infos[0])
+                print(str_sv)
                 sv_name = str_sv[:3]
+                print(sv_name)
+
                 sv_name = sv_name.replace(" ", "")
+                sv_real_name = sv_name
                 sv_name = re.split('(\d+)', sv_name)
                 sv_name = sv_name[1]
+
+                print(sv_name)
 
                 sv_date = str(sv_infos[0])
                 sv_date = sv_date[3:]
 
             else:
                 str_sv = str(sv_infos[0])
+                print(str_sv)
                 sv_name = str_sv[:3]
+                print(sv_name)
+
                 sv_name = sv_name.replace(" ", "")
+                print(sv_name)
+                sv_real_name = sv_name
+
 
                 sv_date = str(sv_infos[0])
                 sv_date = sv_date[3:]
@@ -111,7 +123,7 @@ class RinexReader:
             sv_freq_draft = sv_date[7]
             sv_frame_time = sv_date[8]
 
-            csv_name = self.path + "\\" + str(sv_name) + ".csv"
+            csv_name = self.path + "\\" + str(sv_real_name) + ".csv"
 
             sv_x = sv_infos[1]
             sv_x = sv_x.replace('e', 'E')
@@ -168,7 +180,7 @@ class RinexReader:
             sv_y_acceleration = sv_y_acceleration.replace("D", "e")
             sv_z_acceleration = sv_z_acceleration.replace("D", "e")
 
-            dff = pd.DataFrame([[sv_name, sv_hour, sv_minutes, sv_secondes, sv_x_position]],
+            dff = pd.DataFrame([[sv_real_name, sv_hour, sv_minutes, sv_secondes, sv_x_position]],
                                columns=['Sat_ID', 'hour', 'min', 'sec', 'x'])
             # Tack it on the end
             df = df.append(dff)
@@ -184,7 +196,7 @@ class RinexReader:
                     writer = csv.DictWriter(file, fieldnames=fieldnames)
                     writer.writeheader()
                     writer.writerow({
-                        'Sat_ID': sv_name, 'year': sv_year, 'month': sv_month, 'day': sv_day, 'hour': sv_hour,
+                        'Sat_ID': sv_real_name, 'year': sv_year, 'month': sv_month, 'day': sv_day, 'hour': sv_hour,
                         'min': sv_minutes, 'sec': sv_secondes, 'totalsec': totalsec,
                         'bias': float(sv_clock_bias), 'freq': float(sv_freq_draft), 'frame': float(sv_frame_time),
                         'x': float(sv_x_position), 'y': float(sv_y_position), 'z': float(sv_z_position),
@@ -196,7 +208,7 @@ class RinexReader:
                 with open(csv_name, 'a+', newline='') as file:
                     writer = csv.DictWriter(file, fieldnames=fieldnames)
                     writer.writerow({
-                        'Sat_ID': sv_name, 'year': sv_year, 'month': sv_month, 'day': sv_day, 'hour': sv_hour,
+                        'Sat_ID': sv_real_name, 'year': sv_year, 'month': sv_month, 'day': sv_day, 'hour': sv_hour,
                         'min': sv_minutes, 'sec': sv_secondes, 'totalsec': totalsec,
                         'bias': float(sv_clock_bias), 'freq': float(sv_freq_draft), 'frame': float(sv_frame_time),
                         'x': float(sv_x_position), 'y': float(sv_y_position), 'z': float(sv_z_position),
