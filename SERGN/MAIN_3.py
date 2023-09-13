@@ -1270,8 +1270,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                           Acceleration0, sv_others, infos, self.new_rinex)
 
             else:
-                QMessageBox.about(self, "Rinex Format Error", "The loaded file is not a Rinex Navigation GLONASS.")
-                return
+                QMessageBox.about(self, "Extrapolation limit", "It is not possible to extrapolate this far. Choose another date")
 
         elif diff_year > 0:  # past
 
@@ -1338,7 +1337,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                       Acceleration0, sv_others, infos, self.new_rinex)
 
             else:
-                QMessageBox.about(self, "Rinex Format Error", "The loaded file is not a Rinex Navigation GLONASS.")
+                QMessageBox.about(self, "Extrapolation limit", "It is not possible to extrapolate this far. Choose another date")
 
         else:
             # print('here')
@@ -1661,243 +1660,242 @@ class MainWindow(QtWidgets.QMainWindow):
 
         try:
             f = open(rinex_f, "a")
+            self.header_info_1 = self.header_infos[0]
+            self.header_info_1 = self.header_info_1.split()
+            self.rinex_version = self.header_info_1[0]
+
+            sv_name = sv_name
+            sv_year = sv_date[0]
+
+            sv_real_year = sv_year
+
+            if len(str(sv_year)) == 4:
+                sv_year = sv_year.split("0")
+                sv_year = sv_year[1]
+
+            sv_month = sv_date[1]
+            sv_day = sv_date[2]
+
+            List_month_30 = [1, 4, 6, 9, 11]
+            List_month_31 = [3, 5, 7, 8, 10, 12]
+
+            sv_hour: str
+
+            if time < 0:
+                time = 24 * 60 * 60 + time
+                sv_day = str(int(sv_day) - 1)
+
+            sv_hour, sv_minutes, sv_secondes = sec_to_hours(time)
+            # print(sv_hour, sv_minutes, sv_secondes, time)
+
+            if int(sv_hour) >= 24:
+                # print(sv_hour, sv_day)
+                sv_hour = str(int(sv_hour) - 24)
+                sv_day = str(int(sv_day) + 1)
+                # print(sv_hour, sv_day)
+
+                # if int(sv_day) == 30:
+                #     if int(sv_month) in List_month_30:
+                #         sv_month = str(int(sv_month) + 1)
+                #
+                # if int(sv_day) == 31:
+                #     if int(sv_month) in List_month_31:
+                #         sv_month = str(int(sv_month) + 1)
+                #
+                #         if int(sv_month) == 12:
+                #             sv_month = str(1)
+                #             sv_year = str(int(sv_year) + 1)
+                #
+                # if int(sv_day) == 28:
+                #     if int(sv_month) == 2:
+                #         sv_month = str(int(sv_month) + 1)
+
+            if int(sv_day) == 30:
+                if int(sv_month) in List_month_30:
+                    sv_day = str(1)
+                    sv_month = str(int(sv_month) + 1)
+
+                    if int(sv_month) >= 12:
+                        sv_month = str(1)
+                        sv_year = str(int(sv_year) + 1)
+
+            if int(sv_day) > 31:
+                if int(sv_month) in List_month_31:
+                    sv_day = str(1)
+                    sv_month = str(int(sv_month) + 1)
+
+                    if int(sv_month) >= 12:
+                        sv_month = str(1)
+                        sv_year = str(int(sv_year) + 1)
+
+            if int(sv_day) == 28:
+                if int(sv_month) == 2:
+                    sv_month = str(int(sv_month) + 1)
+
+            sv_other_1 = sv_others[0]
+            sv_other_1 = '%.12e' % Decimal(sv_other_1)
+
+            sv_other_2 = sv_others[1]
+            sv_other_2 = '%.12e' % Decimal(sv_other_2)
+
+            sv_other_3 = sv_others[2]
+            sv_other_3 = '%.12e' % Decimal(sv_other_3)
+
+            sv_x_position = position[0]
+            sv_x_position = '%.12e' % Decimal(sv_x_position)
+
+            sv_x_velocity = position[1]
+            sv_x_velocity = '%.12e' % Decimal(sv_x_velocity)
+
+            sv_x_acceleration = position[2]
+            sv_x_acceleration = '%.12e' % Decimal(sv_x_acceleration)
+
+            sv_y_position = velocity[0]
+            sv_y_position = '%.12e' % Decimal(sv_y_position)
+
+            sv_y_velocity = velocity[1]
+            sv_y_velocity = '%.12e' % Decimal(sv_y_velocity)
+
+            sv_y_acceleration = velocity[2]
+            sv_y_acceleration = '%.12e' % Decimal(sv_y_acceleration)
+
+            sv_z_position = acceleration[0]
+            sv_z_position = '%.12e' % Decimal(sv_z_position)
+
+            sv_z_velocity = acceleration[1]
+            sv_z_velocity = '%.12e' % Decimal(sv_z_velocity)
+
+            sv_z_acceleration = acceleration[2]
+            sv_z_acceleration = '%.12e' % Decimal(sv_z_acceleration)
+
+            sv_info_1 = infos[0]
+            sv_info_1 = '%.12e' % Decimal(sv_info_1)
+
+            sv_info_2 = infos[1]
+            sv_info_2 = '%.12e' % Decimal(sv_info_2)
+
+            sv_info_3 = infos[2]
+            sv_info_3 = '%.12e' % Decimal(sv_info_3)
+
+            exp1 = ' -'
+            exp2 = '-'
+
+            if "R" in str(sv_name) or self.rinex_version == "3.04":
+
+                if len(sv_name) == 1:
+                    sv_name = "0" + str(sv_name)
+
+                if "R" not in sv_name:
+                    sv_name = "R" + str(sv_name)
+
+                sv_hour = "{:02d}".format(int(sv_hour))
+                sv_minutes = "{:02d}".format(int(sv_minutes))
+                sv_secondes = "{:02d}".format(int(sv_secondes))
+                sv_day = "{:02d}".format(int(sv_day))
+
+                string_date = str(sv_name) + " " + str(sv_real_year) + " " + str(sv_month) + " " + str(
+                    sv_day) + " " + sv_hour + " " + str(sv_minutes) + " " + str(sv_secondes) + " " + str(
+                    sv_other_1) + " " + str(sv_other_2) + " " + str(sv_other_3) + "\n"
+
+                string_date = str(string_date)
+                string_date = string_date.replace(exp1, exp2)
+                string_x = "     " + str(sv_x_position) + " " + str(sv_y_position) + " " + str(sv_z_position) + " " + str(
+                    sv_info_1) + "\n"
+                string_x = string_x.replace(exp1, exp2)
+
+                string_y = "     " + str(sv_x_velocity) + " " + str(sv_y_velocity) + " " + str(sv_z_velocity) + " " + str(
+                    sv_info_2) + "\n"
+                string_y = string_y.replace(exp1, exp2)
+
+                string_z = "     " + str(sv_x_acceleration) + " " + str(sv_y_acceleration) + " " + str(
+                    sv_z_acceleration) + " " + str(sv_info_3) + "\n"
+                string_z = string_z.replace(exp1, exp2)
+
+            else:
+                sv_hour = int(sv_hour)
+                sv_day = int(sv_day)
+                sv_month = int(sv_month)
+                sv_secondes = "{:0.1f}".format(int(sv_secondes))
+
+                string_name = " " + str(sv_name)
+
+                string_year = " " + str(sv_year)
+
+                string_month = "  " + str(sv_month)
+                string_day = "  " + str(sv_day)
+                string_hour = "  " + str(sv_hour)
+                string_minutes = " " + str(sv_minutes)
+                string_secondes = "  " + str(sv_secondes)
+                string_str1 = " " + str(sv_other_1)
+                string_str2 = " " + str(sv_other_2)
+                string_str3 = " " + str(sv_other_3)
+
+                if self.rinex_version == "2.01":
+                    string_name_0 = len(sv_name)
+
+                    if int(sv_name) >= 10:
+                        string_name = str(sv_name)
+
+                    if string_name_0 == 2:
+                        string_name = str(sv_name)
+
+                    if int(sv_month) >= 10:
+                        string_month = " " + str(sv_month)
+
+                    if int(sv_day) >= 10:
+                        string_day = " " + str(sv_day)
+
+                    if int(sv_hour) >= 10:
+                        string_hour = " " + str(sv_hour)
+
+                if self.rinex_version == "2.11" or self.rinex_version == "2.10":
+                    string_name = str(sv_name)
+                    string_name_1 = len(sv_name)
+                    if int(sv_name) < 10 and string_name_1 == 1:
+                        string_name = " " + str(sv_name)
+                    elif string_name_1 == 2:
+                        string_name = str(sv_name)
+
+                    if int(sv_month) >= 10:
+                        string_month = " " + str(sv_month)
+
+                    if int(sv_day) >= 10:
+                        string_day = " " + str(sv_day)
+
+                    if int(sv_hour) >= 10:
+                        string_hour = " " + str(sv_hour)
+
+                string_date = string_name + string_year + string_month + string_day + string_hour + string_minutes + \
+                              string_secondes + string_str1 + string_str2 + string_str3 + "\n"
+
+                string_date = str(string_date)
+                string_date = string_date.replace(exp1, exp2)
+                # print(string_date)
+
+                string_x = "    " + str(sv_x_position) + " " + str(sv_y_position) + " " + str(sv_z_position) + " " + str(
+                    sv_info_1) + "\n"
+                string_x = string_x.replace(exp1, exp2)
+
+                string_y = "    " + str(sv_x_velocity) + " " + str(sv_y_velocity) + " " + str(sv_z_velocity) + " " + str(
+                    sv_info_2) + "\n"
+                string_y = string_y.replace(exp1, exp2)
+
+                string_z = "    " + str(sv_x_acceleration) + " " + str(sv_y_acceleration) + " " + str(
+                    sv_z_acceleration) + " " + str(sv_info_3) + "\n"
+                string_z = string_z.replace(exp1, exp2)
+
+            if self.extrapol_direct == "future":
+                f.write(string_date)
+                f.write(string_x)
+                f.write(string_y)
+                f.write(string_z)
+                return 0
+
+            else:
+                return string_date, string_x, string_y, string_z
+
         except PermissionError as perm_err_1:
             print(perm_err_1)
-
-        self.header_info_1 = self.header_infos[0]
-        self.header_info_1 = self.header_info_1.split()
-        self.rinex_version = self.header_info_1[0]
-
-        sv_name = sv_name
-        sv_year = sv_date[0]
-
-        sv_real_year = sv_year
-
-        if len(str(sv_year)) == 4:
-            sv_year = sv_year.split("0")
-            sv_year = sv_year[1]
-
-        sv_month = sv_date[1]
-        sv_day = sv_date[2]
-
-        List_month_30 = [1, 4, 6, 9, 11]
-        List_month_31 = [3, 5, 7, 8, 10, 12]
-
-        sv_hour: str
-
-        if time < 0:
-            time = 24 * 60 * 60 + time
-            sv_day = str(int(sv_day) - 1)
-
-        sv_hour, sv_minutes, sv_secondes = sec_to_hours(time)
-        # print(sv_hour, sv_minutes, sv_secondes, time)
-
-        if int(sv_hour) >= 24:
-            # print(sv_hour, sv_day)
-            sv_hour = str(int(sv_hour) - 24)
-            sv_day = str(int(sv_day) + 1)
-            # print(sv_hour, sv_day)
-
-            # if int(sv_day) == 30:
-            #     if int(sv_month) in List_month_30:
-            #         sv_month = str(int(sv_month) + 1)
-            #
-            # if int(sv_day) == 31:
-            #     if int(sv_month) in List_month_31:
-            #         sv_month = str(int(sv_month) + 1)
-            #
-            #         if int(sv_month) == 12:
-            #             sv_month = str(1)
-            #             sv_year = str(int(sv_year) + 1)
-            #
-            # if int(sv_day) == 28:
-            #     if int(sv_month) == 2:
-            #         sv_month = str(int(sv_month) + 1)
-
-        if int(sv_day) == 30:
-            if int(sv_month) in List_month_30:
-                sv_day = str(1)
-                sv_month = str(int(sv_month) + 1)
-
-                if int(sv_month) >= 12:
-                    sv_month = str(1)
-                    sv_year = str(int(sv_year) + 1)
-
-        if int(sv_day) > 31:
-            if int(sv_month) in List_month_31:
-                sv_day = str(1)
-                sv_month = str(int(sv_month) + 1)
-
-                if int(sv_month) >= 12:
-                    sv_month = str(1)
-                    sv_year = str(int(sv_year) + 1)
-
-        if int(sv_day) == 28:
-            if int(sv_month) == 2:
-                sv_month = str(int(sv_month) + 1)
-
-        sv_other_1 = sv_others[0]
-        sv_other_1 = '%.12e' % Decimal(sv_other_1)
-
-        sv_other_2 = sv_others[1]
-        sv_other_2 = '%.12e' % Decimal(sv_other_2)
-
-        sv_other_3 = sv_others[2]
-        sv_other_3 = '%.12e' % Decimal(sv_other_3)
-
-        sv_x_position = position[0]
-        sv_x_position = '%.12e' % Decimal(sv_x_position)
-
-        sv_x_velocity = position[1]
-        sv_x_velocity = '%.12e' % Decimal(sv_x_velocity)
-
-        sv_x_acceleration = position[2]
-        sv_x_acceleration = '%.12e' % Decimal(sv_x_acceleration)
-
-        sv_y_position = velocity[0]
-        sv_y_position = '%.12e' % Decimal(sv_y_position)
-
-        sv_y_velocity = velocity[1]
-        sv_y_velocity = '%.12e' % Decimal(sv_y_velocity)
-
-        sv_y_acceleration = velocity[2]
-        sv_y_acceleration = '%.12e' % Decimal(sv_y_acceleration)
-
-        sv_z_position = acceleration[0]
-        sv_z_position = '%.12e' % Decimal(sv_z_position)
-
-        sv_z_velocity = acceleration[1]
-        sv_z_velocity = '%.12e' % Decimal(sv_z_velocity)
-
-        sv_z_acceleration = acceleration[2]
-        sv_z_acceleration = '%.12e' % Decimal(sv_z_acceleration)
-
-        sv_info_1 = infos[0]
-        sv_info_1 = '%.12e' % Decimal(sv_info_1)
-
-        sv_info_2 = infos[1]
-        sv_info_2 = '%.12e' % Decimal(sv_info_2)
-
-        sv_info_3 = infos[2]
-        sv_info_3 = '%.12e' % Decimal(sv_info_3)
-
-        exp1 = ' -'
-        exp2 = '-'
-
-        if "R" in str(sv_name) or self.rinex_version == "3.04":
-
-            if len(sv_name) == 1:
-                sv_name = "0" + str(sv_name)
-
-            if "R" not in sv_name:
-                sv_name = "R" + str(sv_name)
-
-            sv_hour = "{:02d}".format(int(sv_hour))
-            sv_minutes = "{:02d}".format(int(sv_minutes))
-            sv_secondes = "{:02d}".format(int(sv_secondes))
-            sv_day = "{:02d}".format(int(sv_day))
-
-            string_date = str(sv_name) + " " + str(sv_real_year) + " " + str(sv_month) + " " + str(
-                sv_day) + " " + sv_hour + " " + str(sv_minutes) + " " + str(sv_secondes) + " " + str(
-                sv_other_1) + " " + str(sv_other_2) + " " + str(sv_other_3) + "\n"
-
-            string_date = str(string_date)
-            string_date = string_date.replace(exp1, exp2)
-            string_x = "     " + str(sv_x_position) + " " + str(sv_y_position) + " " + str(sv_z_position) + " " + str(
-                sv_info_1) + "\n"
-            string_x = string_x.replace(exp1, exp2)
-
-            string_y = "     " + str(sv_x_velocity) + " " + str(sv_y_velocity) + " " + str(sv_z_velocity) + " " + str(
-                sv_info_2) + "\n"
-            string_y = string_y.replace(exp1, exp2)
-
-            string_z = "     " + str(sv_x_acceleration) + " " + str(sv_y_acceleration) + " " + str(
-                sv_z_acceleration) + " " + str(sv_info_3) + "\n"
-            string_z = string_z.replace(exp1, exp2)
-
-        else:
-            sv_hour = int(sv_hour)
-            sv_day = int(sv_day)
-            sv_month = int(sv_month)
-            sv_secondes = "{:0.1f}".format(int(sv_secondes))
-
-            string_name = " " + str(sv_name)
-
-            string_year = " " + str(sv_year)
-
-            string_month = "  " + str(sv_month)
-            string_day = "  " + str(sv_day)
-            string_hour = "  " + str(sv_hour)
-            string_minutes = " " + str(sv_minutes)
-            string_secondes = "  " + str(sv_secondes)
-            string_str1 = " " + str(sv_other_1)
-            string_str2 = " " + str(sv_other_2)
-            string_str3 = " " + str(sv_other_3)
-
-            if self.rinex_version == "2.01":
-                string_name_0 = len(sv_name)
-
-                if int(sv_name) >= 10:
-                    string_name = str(sv_name)
-
-                if string_name_0 == 2:
-                    string_name = str(sv_name)
-
-                if int(sv_month) >= 10:
-                    string_month = " " + str(sv_month)
-
-                if int(sv_day) >= 10:
-                    string_day = " " + str(sv_day)
-
-                if int(sv_hour) >= 10:
-                    string_hour = " " + str(sv_hour)
-
-            if self.rinex_version == "2.11" or self.rinex_version == "2.10":
-                string_name = str(sv_name)
-                string_name_1 = len(sv_name)
-                if int(sv_name) < 10 and string_name_1 == 1:
-                    string_name = " " + str(sv_name)
-                elif string_name_1 == 2:
-                    string_name = str(sv_name)
-
-                if int(sv_month) >= 10:
-                    string_month = " " + str(sv_month)
-
-                if int(sv_day) >= 10:
-                    string_day = " " + str(sv_day)
-
-                if int(sv_hour) >= 10:
-                    string_hour = " " + str(sv_hour)
-
-            string_date = string_name + string_year + string_month + string_day + string_hour + string_minutes + \
-                          string_secondes + string_str1 + string_str2 + string_str3 + "\n"
-
-            string_date = str(string_date)
-            string_date = string_date.replace(exp1, exp2)
-            # print(string_date)
-
-            string_x = "    " + str(sv_x_position) + " " + str(sv_y_position) + " " + str(sv_z_position) + " " + str(
-                sv_info_1) + "\n"
-            string_x = string_x.replace(exp1, exp2)
-
-            string_y = "    " + str(sv_x_velocity) + " " + str(sv_y_velocity) + " " + str(sv_z_velocity) + " " + str(
-                sv_info_2) + "\n"
-            string_y = string_y.replace(exp1, exp2)
-
-            string_z = "    " + str(sv_x_acceleration) + " " + str(sv_y_acceleration) + " " + str(
-                sv_z_acceleration) + " " + str(sv_info_3) + "\n"
-            string_z = string_z.replace(exp1, exp2)
-
-        if self.extrapol_direct == "future":
-            f.write(string_date)
-            f.write(string_x)
-            f.write(string_y)
-            f.write(string_z)
-
-            return 0
-
-        else:
-            return string_date, string_x, string_y, string_z
 
     def midle_func_2(self, time):
         self.extrapol_direct = "past"
