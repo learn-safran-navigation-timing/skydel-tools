@@ -178,7 +178,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ubx_1 = QCheckBox('G: GPS')
         self.ubx_2 = QCheckBox('R: GLONASS')
         self.ubx_3 = QCheckBox('E: GALILEO')
-        self.ubx_4 = QCheckBox('B: BEIDOU')
+        self.ubx_4 = QCheckBox('C: BEIDOU')
         self.ubx_5 = QCheckBox('J: QZSS')
         self.ubx_6 = QCheckBox('K: KPS') #KPS
         self.ubx_7 = QCheckBox('I: IRNSS')
@@ -455,6 +455,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.obs_code_r = list()
         self.obs_code_e = list()
         self.obs_code_b = list()
+        self.obs_code_c = list()
         self.obs_code_i = list()
         self.obs_code_s = list()
         self.obs_code_k = list() #KPS
@@ -549,9 +550,8 @@ class MainWindow(QtWidgets.QMainWindow):
                             str('     ') + str('GPS') + str('         ') + str(
                 'TIME OF FIRST OBS')
 
-            header_str_1 = "      " + "3.04" + "           " + "OBSERVATION DATA    " + str(
-                self.sat_code) + "                   " + "RINEX VERSION / TYPE"
-
+            header_str_1 = ("     3.04" + "           " + "OBSERVATION DATA    " + str(self.sat_code) +
+                            "                   " + "RINEX VERSION / TYPE")
             self.fid_w.write(header_str_1)
             self.fid_w.write('\n')
 
@@ -598,7 +598,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fid_w.write(header_str_10)
             self.fid_w.write('\n')
 
-            if self.ubx_8.isChecked():
+            if self.ubx_9.isChecked():
                 self.sat_code = "M"
                 mixed_code = 1
             else:
@@ -691,9 +691,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.csv_files_GLONASS_G2 = glob.glob(os.path.join(path, "G2 *.csv"))
 
                 if self.csv_files_GLONASS_G1:
-                    self.obs_code_g.append("C1C")
-                    self.obs_code_g.append("L1C")
-                    self.obs_code_g.append("D1C")
+                    self.obs_code_r.append("C1P")
+                    self.obs_code_r.append("L1P")
+                    self.obs_code_r.append("D1P")
                     for path_file in self.csv_files_GLONASS_G1:
                         basename = os.path.basename(path_file)
                         list_sat_r_g1.append(basename)
@@ -702,9 +702,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     list_band_r.append(list_sat_r_g1)
 
                 if self.csv_files_GLONASS_G2:
-                    self.obs_code_g.append("C2C")
-                    self.obs_code_g.append("L2C")
-                    self.obs_code_g.append("D2C")
+                    self.obs_code_r.append("C2P")
+                    self.obs_code_r.append("L2P")
+                    self.obs_code_r.append("D2P")
                     for path_file in self.csv_files_GLONASS_G2:
                         basename = os.path.basename(path_file)
                         list_sat_r_g2.append(basename)
@@ -995,8 +995,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         basename = os.path.basename(path_file)
                         list_sat_i_l5.append(basename)
                     self.Sat_data_dict_i_L5, self.sat_band_list_L5 = self.main_func_2(list_sat_i_l5, path)
-                    list_dict_s.append(self.Sat_data_dict_i_L5)
-                    list_band_s.append(list_sat_i_l5)
+                    list_dict_i.append(self.Sat_data_dict_i_L5)
+                    list_band_i.append(list_sat_i_l5)
 
                 header_str_11_str = self.obs_type_writer(self.sat_code, self.obs_code_i)
 
@@ -1367,7 +1367,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     basename = sat_int.split(".")
                     m2 = int(basename[0])
 
-                    tline_2 = "J" + str("{:02d}".format(int(m2)))
+                    tline_2 = "R" + str("{:02d}".format(int(m2)))
 
                     for dict in list_dict_r:
                         test_cnt_2 = dict["TIME"][cnt_2]
@@ -1451,7 +1451,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     basename = sat_int.split(".")
                     m2 = int(basename[0])
 
-                    tline_2 = "E" + str("{:02d}".format(int(m2)))
+                    tline_2 = "C" + str("{:02d}".format(int(m2)))
 
                     for dict in list_dict_c:
                         test_cnt_2 = dict["TIME"][cnt_2]
