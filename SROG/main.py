@@ -97,13 +97,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.csv_files_QZSS_L5 = list()
         self.csv_files_QZSS_L5S = list()
 
-        self.csv_files_KPS_L1CA = list() #KPS
-        self.csv_files_KPS_L1CB = list() #KPS
-        self.csv_files_KPS_L1C = list() #KPS
-        self.csv_files_KPS_L1S = list() #KPS
-        self.csv_files_KPS_L2C = list() #KPS
-        self.csv_files_KPS_L5 = list() #KPS
-        self.csv_files_KPS_L5S = list() #KPS
+        self.csv_files_KPS_L1CA = list()  # KPS
+        self.csv_files_KPS_L1CB = list()  # KPS
+        self.csv_files_KPS_L1C = list()  # KPS
+        self.csv_files_KPS_L1S = list()  # KPS
+        self.csv_files_KPS_L2C = list()  # KPS
+        self.csv_files_KPS_L5 = list()  # KPS
+        self.csv_files_KPS_L5S = list()  # KPS
 
         self.csv_files_NAVIC_L5 = list()
 
@@ -180,7 +180,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ubx_3 = QCheckBox('E: GALILEO')
         self.ubx_4 = QCheckBox('C: BEIDOU')
         self.ubx_5 = QCheckBox('J: QZSS')
-        self.ubx_6 = QCheckBox('K: KPS') #KPS
+        self.ubx_6 = QCheckBox('K: KPS')  # KPS
         self.ubx_7 = QCheckBox('I: IRNSS')
         self.ubx_8 = QCheckBox('S: SBAS')
         self.ubx_9 = QCheckBox('M: Mixed-ALL')
@@ -190,7 +190,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ubx_3.stateChanged.connect(self.msg_type_handler)
         self.ubx_4.stateChanged.connect(self.msg_type_handler)
         self.ubx_5.stateChanged.connect(self.msg_type_handler)
-        self.ubx_6.stateChanged.connect(self.msg_type_handler) #KPS
+        self.ubx_6.stateChanged.connect(self.msg_type_handler)  # KPS
         self.ubx_7.stateChanged.connect(self.msg_type_handler)
         self.ubx_8.stateChanged.connect(self.msg_type_handler)
         self.ubx_9.stateChanged.connect(self.msg_type_handler)
@@ -204,7 +204,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ubx_msg_layout.addWidget(self.ubx_3, 1)
         ubx_msg_layout.addWidget(self.ubx_4, 1)
         ubx_msg_layout.addWidget(self.ubx_5, 1)
-        ubx_msg_layout.addWidget(self.ubx_6, 1) #KPS
+        ubx_msg_layout.addWidget(self.ubx_6, 1)  # KPS
         ubx_msg_layout.addWidget(self.ubx_7, 1)
         ubx_msg_layout.addWidget(self.ubx_8, 1)
         ubx_msg_layout.addWidget(self.ubx_9, 1)
@@ -389,8 +389,8 @@ class MainWindow(QtWidgets.QMainWindow):
         list_sat = []
         list_dict_j = []
         list_band_j = []
-        list_dict_k = [] #KPS
-        list_band_k = [] #KPS
+        list_dict_k = []  # KPS
+        list_band_k = []  # KPS
         list_dict_g = []
         list_band_g = []
         list_dict_r = []
@@ -421,13 +421,13 @@ class MainWindow(QtWidgets.QMainWindow):
         list_sat_j_l5 = []
         list_sat_j_l5s = []
 
-        list_sat_k_l1ca = [] #kps
-        list_sat_k_l1cb = [] #kps
-        list_sat_k_l1c = [] #kps
-        list_sat_k_l1s = [] #kps
-        list_sat_k_l2c = [] #kps
-        list_sat_k_l5 = [] #kps
-        list_sat_k_l5s = [] #kps
+        list_sat_k_l1ca = []  # kps
+        list_sat_k_l1cb = []  # kps
+        list_sat_k_l1c = []  # kps
+        list_sat_k_l1s = []  # kps
+        list_sat_k_l2c = []  # kps
+        list_sat_k_l5 = []  # kps
+        list_sat_k_l5s = []  # kps
 
         list_sat_r_g1 = []
         list_sat_r_g2 = []
@@ -458,8 +458,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.obs_code_c = list()
         self.obs_code_i = list()
         self.obs_code_s = list()
-        self.obs_code_k = list() #KPS
-
+        self.obs_code_k = list()  # KPS
 
         self.end_process.setText("Processing...")
         np.random.seed(1234)
@@ -550,8 +549,9 @@ class MainWindow(QtWidgets.QMainWindow):
                             str('     ') + str('GPS') + str('         ') + str(
                 'TIME OF FIRST OBS')
 
-            header_str_1 = ("     3.04" + "           " + "OBSERVATION DATA    " + str(self.sat_code) +
-                            "                   " + "RINEX VERSION / TYPE")
+            header_str_1 = "     " + "3.04" + "           " + "OBSERVATION DATA    " + str(
+                self.sat_code) + "                   " + "RINEX VERSION / TYPE"
+
             self.fid_w.write(header_str_1)
             self.fid_w.write('\n')
 
@@ -916,11 +916,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.ubx_6.isChecked() or mixed_code == 1:
                 self.sat_code = "K"
                 self.csv_files_KPS_L1CA = glob.glob(os.path.join(path, "OOO_CS_PSL_L1*.csv"))
-               # self.csv_files_KPS_L1CB = glob.glob(os.path.join(path, "  *.csv"))
-               # self.csv_files_KPS_L1C = glob.glob(os.path.join(path, "QZSSL1C *.csv"))
+                # self.csv_files_KPS_L1CB = glob.glob(os.path.join(path, "  *.csv"))
+                # self.csv_files_KPS_L1C = glob.glob(os.path.join(path, "QZSSL1C *.csv"))
                 self.csv_files_KPS_L2C = glob.glob(os.path.join(path, "OOO_CS_PSL_L2 *.csv"))
-               # self.csv_files_KPS_L1S = glob.glob(os.path.join(path, "QZSSL1S *.csv"))
-               # self.csv_files_KPS_L5S = glob.glob(os.path.join(path, "OOO_CS_PSL_S *.csv"))
+                # self.csv_files_KPS_L1S = glob.glob(os.path.join(path, "QZSSL1S *.csv"))
+                # self.csv_files_KPS_L5S = glob.glob(os.path.join(path, "OOO_CS_PSL_S *.csv"))
                 self.csv_files_KPS_L5 = glob.glob(os.path.join(path, "OOO_CS_PSL_L5 *.csv"))
                 self.csv_files_KPS_S = glob.glob(os.path.join(path, "OOO_CS_PSL_S *.csv"))
 
@@ -1137,7 +1137,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         return Sat_data_dict, sat_band_list
 
-    def main_func_5(self, second, list_dict_g, list_dict_r, list_dict_e, list_dict_c, list_dict_j,list_dict_k,
+    def main_func_5(self, second, list_dict_g, list_dict_r, list_dict_e, list_dict_c, list_dict_j, list_dict_k,
                     list_dict_s, list_dict_i, list_band_g, list_band_r, list_band_e, list_band_c, list_band_i,
                     list_band_s, list_band_j, list_band_k):
 
@@ -1181,7 +1181,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 N_k = max(n_list_k)
                 break
         count_line_sat_k = len(n_list_k)
-
 
         n_list_r = []
         if not list_dict_r:
@@ -1250,8 +1249,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         N = max([N_g, N_j, N_e, N_r, N_s, N_i, N_c, N_k])
 
-        count_line_sat = (count_line_sat_g + count_line_sat_j + count_line_sat_k + count_line_sat_e + count_line_sat_s + count_line_sat_r
-                          + count_line_sat_c + count_line_sat_i)
+        count_line_sat = (
+                    count_line_sat_g + count_line_sat_j + count_line_sat_k + count_line_sat_e + count_line_sat_s + count_line_sat_r
+                    + count_line_sat_c + count_line_sat_i)
 
         time_comp = 500
         List_month_30 = [1, 4, 6, 9, 11]
@@ -1305,7 +1305,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fid_w.write('\n')
 
             second = second + self.time_step_list[0]
-            count_line_sat_2 = 0
 
             # *********************************************************************#
             cnt_1 = 0
@@ -1316,26 +1315,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 mixed_code = 0
 
             if self.ubx_1.isChecked() or mixed_code == 1:
+                if list_band_g:
+                    for cnt_2 in range(len(list_band_g[cnt_1])):
 
-                for cnt_2 in range(len(list_band_g[cnt_1])):
-                    m1 = list_band_g[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                        m1 = list_band_g[cnt_1][cnt_2]
+                        basename = m1.split(" ")
+                        sat_band = basename[0]
+                        sat_int = basename[1]
+                        basename = sat_int.split(".")
+                        m2 = int(basename[0])
+                        tline_2 = "G" + str("{:02d}".format(int(m2)))
 
-                    tline_2 = "G" + str("{:02d}".format(int(m2)))
+                        for dict_data in list_dict_g:
 
-                    for dict in list_dict_g:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
-
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                            if time_comp in list(dict_data["TIME"][cnt_2]):
+                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
+                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
                                 if not psr:
                                     psr = "              "
@@ -1345,21 +1342,21 @@ class MainWindow(QtWidgets.QMainWindow):
                                     dop = "              "
 
                                 tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
+
                                 tline_2 = tline_2 + tline_temp
+
                             else:
                                 pass
 
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
+                        if len(tline_2) <= 4:
+                            pass
+                        else:
+                            self.fid_w.write(tline_2)
+                            self.fid_w.write('\n')
 
             if self.ubx_2.isChecked() or mixed_code == 1:
-                for cnt_2 in range(len(list_band_r[cnt_1])):
+                if list_band_r:
+                   for cnt_2 in range(len(list_band_r[cnt_1])):
                     m1 = list_band_r[cnt_1][cnt_2]
                     basename = m1.split(" ")
                     sat_band = basename[0]
@@ -1369,30 +1366,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     tline_2 = "R" + str("{:02d}".format(int(m2)))
 
-                    for dict in list_dict_r:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
+                    for dict_data in list_dict_r:
+                        if time_comp in list(dict_data["TIME"][cnt_2]):
+                            time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
 
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                            psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                            adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                            dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
+                            if not psr:
+                                psr = "              "
+                            if not adr:
+                                adr = "              "
+                            if not dop:
+                                dop = "              "
 
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                                tline_2 = tline_2 + tline_temp
-                            else:
-                                pass
-
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
+                            tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
+                            tline_2 = tline_2 + tline_temp
+                        else:
+                            pass
 
                     if len(tline_2) <= 4:
                         pass
@@ -1401,25 +1393,25 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.fid_w.write('\n')
 
             if self.ubx_3.isChecked() or mixed_code == 1:
-                for cnt_2 in range(len(list_band_e[cnt_1])):
-                    m1 = list_band_e[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                if list_band_e:
+                    for cnt_2 in range(len(list_band_e[cnt_1])):
+                        m1 = list_band_e[cnt_1][cnt_2]
+                        basename = m1.split(" ")
+                        sat_band = basename[0]
+                        sat_int = basename[1]
+                        basename = sat_int.split(".")
+                        m2 = int(basename[0])
 
-                    tline_2 = "E" + str("{:02d}".format(int(m2)))
+                        tline_2 = "E" + str("{:02d}".format(int(m2)))
 
-                    for dict in list_dict_e:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
+                        for dict_data in list_dict_e:
 
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                            if time_comp in list(dict_data["TIME"][cnt_2]):
+                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
+
+                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
                                 if not psr:
                                     psr = "              "
@@ -1433,35 +1425,30 @@ class MainWindow(QtWidgets.QMainWindow):
                             else:
                                 pass
 
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
+                        if len(tline_2) <= 4:
+                            pass
+                        else:
+                            self.fid_w.write(tline_2)
+                            self.fid_w.write('\n')
 
             if self.ubx_4.isChecked() or mixed_code == 1:
-                for cnt_2 in range(len(list_band_c[cnt_1])):
-                    m1 = list_band_c[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                if list_band_c:
+                    for cnt_2 in range(len(list_band_c[cnt_1])):
+                        m1 = list_band_c[cnt_1][cnt_2]
+                        basename = m1.split(" ")
+                        sat_band = basename[0]
+                        sat_int = basename[1]
+                        basename = sat_int.split(".")
+                        m2 = int(basename[0])
 
-                    tline_2 = "C" + str("{:02d}".format(int(m2)))
+                        tline_2 = "C" + str("{:02d}".format(int(m2)))
 
-                    for dict in list_dict_c:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
-
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                        for dict_data in list_dict_c:
+                            if time_comp in list(dict_data["TIME"][cnt_2]):
+                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
+                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
                                 if not psr:
                                     psr = "              "
@@ -1472,39 +1459,34 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
                                 tline_2 = tline_2 + tline_temp
+
                             else:
                                 pass
-
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
+                        if len(tline_2) <= 4:
+                            pass
+                        else:
+                            self.fid_w.write(tline_2)
+                            self.fid_w.write('\n')
 
             if self.ubx_5.isChecked() or mixed_code == 1:
+                if list_band_j:
+                    for cnt_2 in range(len(list_band_j[cnt_1])):
+                        m1 = list_band_j[cnt_1][cnt_2]
+                        basename = m1.split(" ")
+                        sat_band = basename[0]
+                        sat_int = basename[1]
+                        basename = sat_int.split(".")
+                        m2 = int(basename[0])
 
-                for cnt_2 in range(len(list_band_j[cnt_1])):
-                    m1 = list_band_j[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                        tline_2 = "J" + str("{:02d}".format(int(m2)))
 
-                    tline_2 = "J" + str("{:02d}".format(int(m2)))
+                        for dict_data in list_dict_c:
 
-                    for dict in list_dict_j:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
-
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                            if time_comp in list(dict_data["TIME"][cnt_2]):
+                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
+                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
                                 if not psr:
                                     psr = "              "
@@ -1515,39 +1497,35 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
                                 tline_2 = tline_2 + tline_temp
+
                             else:
                                 pass
 
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
+                        if len(tline_2) <= 4:
+                            pass
+                        else:
+                            self.fid_w.write(tline_2)
+                            self.fid_w.write('\n')
 
             if self.ubx_6.isChecked() or mixed_code == 1:
+                if list_band_k:
+                    for cnt_2 in range(len(list_band_k[cnt_1])):
+                        m1 = list_band_k[cnt_1][cnt_2]
+                        basename = m1.split(" ")
+                        sat_band = basename[0]
+                        sat_int = basename[1]
+                        basename = sat_int.split(".")
+                        m2 = int(basename[0])
 
-                for cnt_2 in range(len(list_band_k[cnt_1])):
-                    m1 = list_band_k[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                        tline_2 = "K" + str("{:02d}".format(int(m2)))
 
-                    tline_2 = "K" + str("{:02d}".format(int(m2)))
+                        for dict_data in list_dict_k:
 
-                    for dict in list_dict_k:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
-
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                            if time_comp in list(dict_data["TIME"][cnt_2]):
+                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
+                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
                                 if not psr:
                                     psr = "              "
@@ -1558,38 +1536,34 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
                                 tline_2 = tline_2 + tline_temp
+
                             else:
                                 pass
-
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
+                        if len(tline_2) <= 4:
+                            pass
+                        else:
+                            self.fid_w.write(tline_2)
+                            self.fid_w.write('\n')
 
             if self.ubx_7.isChecked() or mixed_code == 1:
-                for cnt_2 in range(len(list_band_i[cnt_1])):
-                    m1 = list_band_i[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                if list_band_i:
+                    for cnt_2 in range(len(list_band_i[cnt_1])):
+                        m1 = list_band_i[cnt_1][cnt_2]
+                        basename = m1.split(" ")
+                        sat_band = basename[0]
+                        sat_int = basename[1]
+                        basename = sat_int.split(".")
+                        m2 = int(basename[0])
 
-                    tline_2 = "I" + str("{:02d}".format(int(m2)))
+                        tline_2 = "I" + str("{:02d}".format(int(m2)))
 
-                    for dict in list_dict_i:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
+                        for dict_data in list_dict_i:
+                            if time_comp in list(dict_data["TIME"][cnt_2]):
+                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
 
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
                                 if not psr:
                                     psr = "              "
@@ -1600,38 +1574,32 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
                                 tline_2 = tline_2 + tline_temp
+
+                                if len(tline_2) <= 4:
+                                    pass
+                                else:
+                                    self.fid_w.write(tline_2)
+                                    self.fid_w.write('\n')
                             else:
                                 pass
-
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
 
             if self.ubx_8.isChecked() or mixed_code == 1:
-                for cnt_2 in range(len(list_band_s[cnt_1])):
-                    m1 = list_band_s[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                if list_band_s:
+                    for cnt_2 in range(len(list_band_s[cnt_1])):
+                        m1 = list_band_s[cnt_1][cnt_2]
+                        basename = m1.split(" ")
+                        sat_band = basename[0]
+                        sat_int = basename[1]
+                        basename = sat_int.split(".")
+                        m2 = int(basename[0])
 
-                    tline_2 = "S" + str("{:02d}".format(int(m2)))
-
-                    for dict in list_dict_s:
-                        test_cnt_2 = dict["TIME"][cnt_2]
-                        try:
-                            curr_dict_time = int(dict["TIME"][cnt_2][n])
-                            if time_comp == curr_dict_time:
-
-                                psr = str('{: >14.3f}'.format(dict["PSR"][cnt_2][n]))
-                                adr = str('{: >14.3f}'.format(dict["ADR"][cnt_2][n]))
-                                dop = str('{: >14.3f}'.format(dict["DOP"][cnt_2][n]))
+                        tline_2 = "S" + str("{:02d}".format(int(m2)))
+                        for dict_data in list_dict_s:
+                            if time_comp in list(dict_data["TIME"][cnt_2]):
+                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
+                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
+                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
+                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
 
                                 if not psr:
                                     psr = "              "
@@ -1642,17 +1610,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
                                 tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
                                 tline_2 = tline_2 + tline_temp
+
                             else:
                                 pass
-
-                        except IndexError as err_ind_1:
-                            print(err_ind_1)
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
+                        if len(tline_2) <= 4:
+                            pass
+                        else:
+                            self.fid_w.write(tline_2)
+                            self.fid_w.write('\n')
 
             time_comp = time_comp + 100
 
@@ -1680,7 +1645,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ubx_9.setChecked(False)
 
         self.generate_rinex_button.setEnabled(False)
-
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
