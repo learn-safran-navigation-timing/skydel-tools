@@ -561,7 +561,10 @@ class UBXMessage:
                 if self._ubxClass == b"\x06" and self._ubxID == b"\x01":  # CFG-MSG
                     if att == "msgClass":
                         clsid = self.val2bytes(val, ubt.U1)
-                        val = ubt.UBX_CLASSES[clsid]
+                        try:
+                            val = ubt.UBX_CLASSES[clsid]
+                        except KeyError as err:
+                            print(str(err))
                     if att == "msgID" and clsid:
                         try:
                             msgid = self.val2bytes(val, ubt.U1)
