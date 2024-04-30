@@ -3,7 +3,7 @@ import csv
 import os
 import shutil
 import pandas as pd
-import re
+
 
 class RinexReader:
 
@@ -12,7 +12,7 @@ class RinexReader:
 
     def find_header(self, filename):
         header = ''
-        headers_infos = []
+        headers_info = []
         j = 0
         rinex_detection = 0
         if filename:
@@ -20,7 +20,7 @@ class RinexReader:
                 for i, line in enumerate(handler):
 
                     header += line
-                    headers_infos.append(line)
+                    headers_info.append(line)
 
                     j += 1
 
@@ -34,7 +34,7 @@ class RinexReader:
                         rinex_detection = rinex_detection + 1
                         break
 
-            return j, rinex_detection, headers_infos
+            return j, rinex_detection, headers_info
 
     def readRinex(self, fileName, lineSkip):
 
@@ -76,30 +76,27 @@ class RinexReader:
 
         for j in range(0, length_skipline, 4):
 
-            sv_infos = new_lines[j: j + 4]
+            sv_info = new_lines[j: j + 4]
 
-            if "R" in sv_infos[0]:
-                str_sv = str(sv_infos[0])
+            if "R" in sv_info[0]:
+                str_sv = str(sv_info[0])
                 sv_name = str_sv[:3]
 
                 sv_name = sv_name.replace(" ", "")
                 sv_real_name = sv_name
-                sv_name = re.split('(\d+)', sv_name)
-                sv_name = sv_name[1]
-
-
-                sv_date = str(sv_infos[0])
+                # sv_name = re.split('(\d+)', sv_name)
+                # sv_name = sv_name[1]
+                sv_date = str(sv_info[0])
                 sv_date = sv_date[3:]
 
             else:
-                str_sv = str(sv_infos[0])
+                str_sv = str(sv_info[0])
                 sv_name = str_sv[:3]
 
                 sv_name = sv_name.replace(" ", "")
                 sv_real_name = sv_name
 
-
-                sv_date = str(sv_infos[0])
+                sv_date = str(sv_info[0])
                 sv_date = sv_date[3:]
 
             sv_date = sv_date.replace('e', 'E')
@@ -119,7 +116,7 @@ class RinexReader:
 
             csv_name = self.path + "\\" + str(sv_real_name) + ".csv"
 
-            sv_x = sv_infos[1]
+            sv_x = sv_info[1]
             sv_x = sv_x.replace('e', 'E')
             sv_x = sv_x.replace('D', 'E')
 
@@ -131,7 +128,7 @@ class RinexReader:
             sv_x_acceleration = sv_x[2]
             sv_x_health = sv_x[3]
 
-            sv_y = sv_infos[2]
+            sv_y = sv_info[2]
             sv_y = sv_y.replace('e', 'E')
             sv_y = sv_y.replace('D', 'E')
 
@@ -143,7 +140,7 @@ class RinexReader:
             sv_y_acceleration = sv_y[2]
             sv_y_health = sv_y[3]
 
-            sv_z = sv_infos[3]
+            sv_z = sv_info[3]
             sv_z = sv_z.replace('e', 'E')
             sv_z = sv_z.replace('D', 'E')
             sv_z = sv_z.replace('E-', 'Eneg').replace('-', ' -').split()
@@ -177,12 +174,11 @@ class RinexReader:
             dff = pd.DataFrame([[sv_real_name, sv_hour, sv_minutes, sv_secondes, sv_x_position]],
                                columns=['Sat_ID', 'hour', 'min', 'sec', 'x'])
             # Tack it on the end
-            df = df.append(dff)
+            df = pd.concat([df, dff])
 
             totalsec = int(sv_hour) * 3600 + int(sv_minutes) * 60 + int(float(sv_secondes))
             fieldnames = ['Sat_ID', 'year', 'month', 'day', 'hour', 'min', 'sec', 'totalsec', 'bias', 'freq', 'frame',
                           'x', 'y', 'z', 'vx', 'vy', 'vz', 'ax', 'ay', 'az', 'health', 'freq_num', 'age']
-
 
             if csv_name not in csv_list:
                 csv_list.append(csv_name)

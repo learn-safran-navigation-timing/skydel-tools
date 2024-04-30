@@ -743,84 +743,87 @@ class MainWindow(QtWidgets.QMainWindow):
                 # testfile = self.testfname.open("rb")
                 # # file = os.path.join(os.path.dirname(__file__), 'ubxdata.bin')
                 # with open(self.stream = open(self.testfname, 'rb')
-                with open(self.testfname, 'rb') as self.stream:
-                    self.startWatch = True
+                if self.testfname:
+                    with open(self.testfname, 'rb') as self.stream:
+                        self.startWatch = True
 
-                    if self.protocol_mode == "UBX":
-                        ubr = UBXReader(self.stream, False)
-                        self.refresh_text_box_2("\n")  # MY_FUNCTION_CALL
-                        self.refresh_text_box_2("--- Streaming ...")  # MY_FUNCTION_CALL
+                        if self.protocol_mode == "UBX":
+                            ubr = UBXReader(self.stream, False)
+                            self.refresh_text_box_2("\n")  # MY_FUNCTION_CALL
+                            self.refresh_text_box_2("--- Streaming ...")  # MY_FUNCTION_CALL
 
-                    elif self.protocol_mode == "UBX + NMEA":
-                        ubr = UBXReader(self.stream, False)
-                        self.refresh_text_box_2("\n")  # MY_FUNCTION_CALL
-                        self.refresh_text_box_2("--- Streaming ...")  # MY_FUNCTION_CALL
+                        elif self.protocol_mode == "UBX + NMEA":
+                            ubr = UBXReader(self.stream, False)
+                            self.refresh_text_box_2("\n")  # MY_FUNCTION_CALL
+                            self.refresh_text_box_2("--- Streaming ...")  # MY_FUNCTION_CALL
 
-                    else:
-                        print("SURELY A MESSAGE FROM THE MOON")
-                    #print('UBR:', ubr)
+                        else:
+                            print("SURELY A MESSAGE FROM THE MOON")
+                        # print('UBR:', ubr)
 
-                    for (raw_data, self.parsed_data) in ubr:
+                        for (raw_data, self.parsed_data) in ubr:
 
-                        if self.running_stop == False:
-                            break
+                            if self.running_stop == False:
+                                break
 
-                        if self.parsed_data:
+                            if self.parsed_data:
 
-                            if self.ubx_1.isChecked() and self.ubx_2.isChecked():
-                                if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-PVT':
+                                if self.ubx_1.isChecked() and self.ubx_2.isChecked():
+                                    if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-PVT':
+                                        self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                        self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+
+                                elif self.ubx_1.isChecked() and self.ubx_3.isChecked():
+                                    if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-POSECEF':
+                                        self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                        self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+
+                                elif self.ubx_1.isChecked() and self.ubx_5.isChecked():
+                                    if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-TIMEGPS':
+                                        self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                        self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+
+                                elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
+                                    if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-POSECEF':
+                                        self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                        self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+
+                                elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
+                                    if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-TIMEGPS':
+                                        self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                        self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+
+                                elif self.ubx_5.isChecked():
+                                    if self.parsed_data.identity == 'NAV-TIMEGPS':
+                                        self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                        self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+                                #
+                                # elif self.ubx_3.isChecked():
+                                #     if self.parsed_data.identity == 'NAV-POSECEF':
+                                #         self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
+                                #         self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+                                #         print(self.parsed_data)
+
+                                elif self.ubx_4.isChecked():
+
                                     self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                     self.refresh_text_box("\n")  # MY_FUNCTION_CALL
 
-                            elif self.ubx_1.isChecked() and self.ubx_3.isChecked():
-                                if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-POSECEF':
-                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+                                    # print(self.parsed_data)
 
-                            elif self.ubx_1.isChecked() and self.ubx_5.isChecked():
-                                if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-TIMEGPS':
-                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+                                if self.save_checkbox.isChecked():
+                                    print("Saving CSV")
+                                    self.save_parsed_data(self.parsed_data)
 
-                            elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
-                                if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-POSECEF':
-                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
+                                else:
+                                    print("Not Saving CSV")
 
-                            elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
-                                if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-TIMEGPS':
-                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-
-                            elif self.ubx_5.isChecked():
-                                if self.parsed_data.identity == 'NAV-TIMEGPS':
-                                    self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                                    self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                            #
-                            # elif self.ubx_3.isChecked():
-                            #     if self.parsed_data.identity == 'NAV-POSECEF':
-                            #         self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                            #         self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                            #         print(self.parsed_data)
-
-                            elif self.ubx_4.isChecked():
-
-                                self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
-                                self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-
-                                #print(self.parsed_data)
-
-                            if self.save_checkbox.isChecked():
-                                print("Saving CSV")
-                                self.save_parsed_data(self.parsed_data)
-
-                            else:
-                                print("Not Saving CSV")
-
-                            try:
-                                self.real_itow.setText("iTOW: " + str(itow2utc(self.parsed_data.iTOW)))
-                            except AttributeError:
-                                continue
+                                try:
+                                    self.real_itow.setText("iTOW: " + str(itow2utc(self.parsed_data.iTOW)))
+                                except AttributeError:
+                                    continue
+                else:
+                    QMessageBox.about(self, "Load file error", "File not found.")
 
         elif self.running_mode == "SERIAL":
             try:
@@ -848,25 +851,25 @@ class MainWindow(QtWidgets.QMainWindow):
                             if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-PVT':
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                #print(self.parsed_data)
+                                # print(self.parsed_data)
 
                         elif self.ubx_1.isChecked() and self.ubx_3.isChecked():
                             if self.parsed_data.identity == 'RXM-RAWX' or self.parsed_data.identity == 'NAV-POSECEF':
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                #print(self.parsed_data)
+                                # print(self.parsed_data)
 
                         elif self.ubx_2.isChecked() and self.ubx_3.isChecked():
                             if self.parsed_data.identity == 'NAV-PVT' or self.parsed_data.identity == 'NAV-POSECEF':
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                #print(self.parsed_data)
+                                # print(self.parsed_data)
 
                         elif self.ubx_5.isChecked():
                             if self.parsed_data.identity == 'NAV-TIMEGPS':
                                 self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                                 self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                                #print(self.parsed_data)
+                                # print(self.parsed_data)
 
                         # elif self.ubx_2.isChecked():
                         #     if self.parsed_data.identity == 'NAV-PVT':
@@ -883,7 +886,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         elif self.ubx_4.isChecked():
                             self.refresh_text_box(self.parsed_data)  # MY_FUNCTION_CALL
                             self.refresh_text_box("\n")  # MY_FUNCTION_CALL
-                            #print(self.parsed_data)
+                            # print(self.parsed_data)
 
                         if self.save_checkbox.isChecked():
                             print("Saving CSV")
@@ -902,7 +905,6 @@ class MainWindow(QtWidgets.QMainWindow):
             print("MUST BE A MESSAGE FROM ANOTHER PLANET")
 
     def save_parsed_data(self, parsed_data):
-
 
         if self.ubx_1.isChecked():
             if parsed_data.identity == 'RXM-RAWX':
@@ -2811,368 +2813,388 @@ class MainWindow(QtWidgets.QMainWindow):
                         for gnss_id in range(1, 10, 1):
                             gnss_message_id = 'gnssId_0' + str(gnss_id)
                             gnss_message_id_number = getattr(parsed_data, gnss_message_id)
-                            gnss_name = GNSSLIST[gnss_message_id_number]
-                            id_msg = '0' + str(gnss_id)
-                            if gnss_name == "GPS":
-                                gnss_sv_id = 'svId_0' + str(gnss_id)
-                                gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
-                                gnss_sig_id = 'sigId_0' + str(gnss_id)
-                                gnss_sig_id_name = GPSSIGLIST[getattr(parsed_data, gnss_sig_id)]
-                                csv_name_1 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
-                                    gnss_sv_id_name) + ".csv"
-                                # rcvTow_id = 'prMes_0' + str(gnss_id)
-                                # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
-                                #
-                                # week_id = 'prMes_0' + str(gnss_id)
-                                # week_id_name = getattr(parsed_data, week_id)
-                                #
-                                # leapS_id = 'prMes_0' + str(gnss_id)
-                                # leapS_id_name = getattr(parsed_data, leapS_id)
-                                prMes_id = 'prMes_0' + str(gnss_id)
-                                prMes_id_name = getattr(parsed_data, prMes_id)
 
-                                cpMes_id = 'cpMes_0' + str(gnss_id)
-                                cpMes_id_name = getattr(parsed_data, cpMes_id)
+                            try:
+                                gnss_name = GNSSLIST[gnss_message_id_number]
+                                id_msg = '0' + str(gnss_id)
+                                if gnss_name == "GPS":
+                                    gnss_sv_id = 'svId_0' + str(gnss_id)
+                                    gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
+                                    gnss_sig_id = 'sigId_0' + str(gnss_id)
+                                    gnss_sig_id_name = GPSSIGLIST[getattr(parsed_data, gnss_sig_id)]
+                                    csv_name_1 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
+                                        gnss_sv_id_name) + ".csv"
+                                    # rcvTow_id = 'prMes_0' + str(gnss_id)
+                                    # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
+                                    #
+                                    # week_id = 'prMes_0' + str(gnss_id)
+                                    # week_id_name = getattr(parsed_data, week_id)
+                                    #
+                                    # leapS_id = 'prMes_0' + str(gnss_id)
+                                    # leapS_id_name = getattr(parsed_data, leapS_id)
+                                    prMes_id = 'prMes_0' + str(gnss_id)
+                                    prMes_id_name = getattr(parsed_data, prMes_id)
 
-                                doMes_id = 'doMes_0' + str(gnss_id)
-                                doMes_id_name = getattr(parsed_data, doMes_id)
+                                    cpMes_id = 'cpMes_0' + str(gnss_id)
+                                    cpMes_id_name = getattr(parsed_data, cpMes_id)
 
-                                freq_id = 'freqId_0' + str(gnss_id)
-                                freq_id_name = getattr(parsed_data, freq_id)
+                                    doMes_id = 'doMes_0' + str(gnss_id)
+                                    doMes_id_name = getattr(parsed_data, doMes_id)
 
-                                locktime_id = 'locktime_0' + str(gnss_id)
-                                locktime_id_name = getattr(parsed_data, locktime_id)
+                                    freq_id = 'freqId_0' + str(gnss_id)
+                                    freq_id_name = getattr(parsed_data, freq_id)
 
-                                cno_id = 'cno_0' + str(gnss_id)
-                                cno_id_name = getattr(parsed_data, cno_id)
+                                    locktime_id = 'locktime_0' + str(gnss_id)
+                                    locktime_id_name = getattr(parsed_data, locktime_id)
 
-                                prStdev_id = 'prStdev_0' + str(gnss_id)
-                                prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                    cno_id = 'cno_0' + str(gnss_id)
+                                    cno_id_name = getattr(parsed_data, cno_id)
 
-                                cpStdev_id = 'cpStdev_0' + str(gnss_id)
-                                cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                    prStdev_id = 'prStdev_0' + str(gnss_id)
+                                    prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
 
-                                doStdev_id = 'doStdev_0' + str(gnss_id)
-                                doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                    cpStdev_id = 'cpStdev_0' + str(gnss_id)
+                                    cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
 
-                                trkStat_id = 'trkStat_0' + str(gnss_id)
-                                trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                    doStdev_id = 'doStdev_0' + str(gnss_id)
+                                    doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
 
-                                reserved2_id = 'reserved2_0' + str(gnss_id)
-                                reserved2_id_name = getattr(parsed_data, reserved2_id)
+                                    trkStat_id = 'trkStat_0' + str(gnss_id)
+                                    trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
 
-                                fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
-                                              'freqId', 'locktime', 'cno']
-                                if not csv_name_1 in self.csv_list_1:
-                                    self.csv_list_1.append(csv_name_1)
-                                    with open(csv_name_1, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writeheader()
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-                                else:
-                                    with open(csv_name_1, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                    reserved2_id = 'reserved2_0' + str(gnss_id)
+                                    reserved2_id_name = getattr(parsed_data, reserved2_id)
 
-                            if gnss_name == "Galileo":
-                                gnss_sv_id = 'svId_0' + str(gnss_id)
-                                gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
-                                gnss_sig_id = 'sigId_0' + str(gnss_id)
-                                gnss_sig_id_name = GALILEOSIGLIST[getattr(parsed_data, gnss_sig_id)]
-                                csv_name_2 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
-                                    gnss_sv_id_name) + ".csv"
+                                    fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
+                                                  'freqId', 'locktime', 'cno']
+                                    if not csv_name_1 in self.csv_list_1:
+                                        self.csv_list_1.append(csv_name_1)
+                                        with open(csv_name_1, 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writeheader()
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                    else:
+                                        with open(csv_name_1, 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
-                                # rcvTow_id = 'prMes_0' + str(gnss_id)
-                                # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
-                                #
-                                # week_id = 'prMes_0' + str(gnss_id)
-                                # week_id_name = getattr(parsed_data, week_id)
-                                #
-                                # leapS_id = 'prMes_0' + str(gnss_id)
-                                # leapS_id_name = getattr(parsed_data, leapS_id)
-                                prMes_id = 'prMes_0' + str(gnss_id)
-                                prMes_id_name = getattr(parsed_data, prMes_id)
+                                if gnss_name == "Galileo":
+                                    gnss_sv_id = 'svId_0' + str(gnss_id)
+                                    gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
+                                    gnss_sig_id = 'sigId_0' + str(gnss_id)
+                                    try:
+                                        gnss_sig_id_name = GALILEOSIGLIST[getattr(parsed_data, gnss_sig_id)]
+                                    except KeyError as key_err_gal:
+                                        print(key_err_gal)
 
-                                cpMes_id = 'cpMes_0' + str(gnss_id)
-                                cpMes_id_name = getattr(parsed_data, cpMes_id)
+                                    csv_name_2 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
+                                        gnss_sv_id_name) + ".csv"
 
-                                doMes_id = 'doMes_0' + str(gnss_id)
-                                doMes_id_name = getattr(parsed_data, doMes_id)
+                                    # rcvTow_id = 'prMes_0' + str(gnss_id)
+                                    # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
+                                    #
+                                    # week_id = 'prMes_0' + str(gnss_id)
+                                    # week_id_name = getattr(parsed_data, week_id)
+                                    #
+                                    # leapS_id = 'prMes_0' + str(gnss_id)
+                                    # leapS_id_name = getattr(parsed_data, leapS_id)
+                                    prMes_id = 'prMes_0' + str(gnss_id)
+                                    prMes_id_name = getattr(parsed_data, prMes_id)
 
-                                freq_id = 'freqId_0' + str(gnss_id)
-                                freq_id_name = getattr(parsed_data, freq_id)
+                                    cpMes_id = 'cpMes_0' + str(gnss_id)
+                                    cpMes_id_name = getattr(parsed_data, cpMes_id)
 
-                                locktime_id = 'locktime_0' + str(gnss_id)
-                                locktime_id_name = getattr(parsed_data, locktime_id)
+                                    doMes_id = 'doMes_0' + str(gnss_id)
+                                    doMes_id_name = getattr(parsed_data, doMes_id)
 
-                                cno_id = 'cno_0' + str(gnss_id)
-                                cno_id_name = getattr(parsed_data, cno_id)
+                                    freq_id = 'freqId_0' + str(gnss_id)
+                                    freq_id_name = getattr(parsed_data, freq_id)
 
-                                prStdev_id = 'prStdev_0' + str(gnss_id)
-                                prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                    locktime_id = 'locktime_0' + str(gnss_id)
+                                    locktime_id_name = getattr(parsed_data, locktime_id)
 
-                                cpStdev_id = 'cpStdev_0' + str(gnss_id)
-                                cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                    cno_id = 'cno_0' + str(gnss_id)
+                                    cno_id_name = getattr(parsed_data, cno_id)
 
-                                doStdev_id = 'doStdev_0' + str(gnss_id)
-                                doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                    prStdev_id = 'prStdev_0' + str(gnss_id)
+                                    prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
 
-                                trkStat_id = 'trkStat_0' + str(gnss_id)
-                                trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                    cpStdev_id = 'cpStdev_0' + str(gnss_id)
+                                    cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
 
-                                reserved2_id = 'reserved2_0' + str(gnss_id)
-                                reserved2_id_name = getattr(parsed_data, reserved2_id)
+                                    doStdev_id = 'doStdev_0' + str(gnss_id)
+                                    doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
 
-                                fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
-                                              'freqId', 'locktime', 'cno']
-                                if not csv_name_2 in self.csv_list_2:
-                                    self.csv_list_2.append(csv_name_2)
-                                    with open(csv_name_2, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writeheader()
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-                                else:
-                                    with open(csv_name_2, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-                            # if gnss_name == "Galileo":
-                            #     print(gnss_name)
-                            #     gnss_sv_id = 'svId_0' + str(gnss_id)
-                            #     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
-                            #     gnss_sig_id = 'sigId_0' + str(gnss_id)
-                            #     gnss_sig_id_name = getattr(parsed_data, gnss_sig_id)
-                            #     csv_name = str(GALILEOSIGLIST[gnss_sig_id_name]) + " Sv_Id " + str(gnss_sv_id_name) + ".csv"
-                            #     if not csv_name in csv_list:
-                            #         with open(csv_name, mode='w') as gal_info:
-                            #             gal_info = csv.writer(gal_info, delimiter=',', quotechar='"', lineterminator='\n',
-                            #                                   quoting=csv.QUOTE_MINIMAL)
-                            #             gal_info.writerow(gnss_name)
-                            #         csv_list.append(csv_name)
-                            #     else:
-                            #         pass
-                            if gnss_name == "GLONASS":
-                                gnss_sv_id = 'svId_0' + str(gnss_id)
-                                gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
-                                gnss_sig_id = 'sigId_0' + str(gnss_id)
-                                gnss_sig_id_name = GLONASSSIGLIST[getattr(parsed_data, gnss_sig_id)]
-                                csv_name_3 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
-                                    gnss_sv_id_name) + ".csv"
-                                # rcvTow_id = 'prMes_0' + str(gnss_id)
-                                # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
-                                #
-                                # week_id = 'prMes_0' + str(gnss_id)
-                                # week_id_name = getattr(parsed_data, week_id)
-                                #
-                                # leapS_id = 'prMes_0' + str(gnss_id)
-                                # leapS_id_name = getattr(parsed_data, leapS_id)
-                                prMes_id = 'prMes_0' + str(gnss_id)
-                                prMes_id_name = getattr(parsed_data, prMes_id)
+                                    trkStat_id = 'trkStat_0' + str(gnss_id)
+                                    trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
 
-                                cpMes_id = 'cpMes_0' + str(gnss_id)
-                                cpMes_id_name = getattr(parsed_data, cpMes_id)
+                                    reserved2_id = 'reserved2_0' + str(gnss_id)
+                                    reserved2_id_name = getattr(parsed_data, reserved2_id)
 
-                                doMes_id = 'doMes_0' + str(gnss_id)
-                                doMes_id_name = getattr(parsed_data, doMes_id)
+                                    fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
+                                                  'freqId', 'locktime', 'cno']
+                                    if not csv_name_2 in self.csv_list_2:
+                                        self.csv_list_2.append(csv_name_2)
+                                        with open(csv_name_2, 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writeheader()
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                    else:
+                                        with open(csv_name_2, 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                # if gnss_name == "Galileo":
+                                #     print(gnss_name)
+                                #     gnss_sv_id = 'svId_0' + str(gnss_id)
+                                #     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
+                                #     gnss_sig_id = 'sigId_0' + str(gnss_id)
+                                #     gnss_sig_id_name = getattr(parsed_data, gnss_sig_id)
+                                #     csv_name = str(GALILEOSIGLIST[gnss_sig_id_name]) + " Sv_Id " + str(gnss_sv_id_name) + ".csv"
+                                #     if not csv_name in csv_list:
+                                #         with open(csv_name, mode='w') as gal_info:
+                                #             gal_info = csv.writer(gal_info, delimiter=',', quotechar='"', lineterminator='\n',
+                                #                                   quoting=csv.QUOTE_MINIMAL)
+                                #             gal_info.writerow(gnss_name)
+                                #         csv_list.append(csv_name)
+                                #     else:
+                                #         pass
+                                if gnss_name == "GLONASS":
+                                    gnss_sv_id = 'svId_0' + str(gnss_id)
+                                    gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
+                                    gnss_sig_id = 'sigId_0' + str(gnss_id)
+                                    gnss_sig_id_name = GLONASSSIGLIST[getattr(parsed_data, gnss_sig_id)]
+                                    csv_name_3 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
+                                        gnss_sv_id_name) + ".csv"
+                                    # rcvTow_id = 'prMes_0' + str(gnss_id)
+                                    # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
+                                    #
+                                    # week_id = 'prMes_0' + str(gnss_id)
+                                    # week_id_name = getattr(parsed_data, week_id)
+                                    #
+                                    # leapS_id = 'prMes_0' + str(gnss_id)
+                                    # leapS_id_name = getattr(parsed_data, leapS_id)
+                                    prMes_id = 'prMes_0' + str(gnss_id)
+                                    prMes_id_name = getattr(parsed_data, prMes_id)
 
-                                freq_id = 'freqId_0' + str(gnss_id)
-                                freq_id_name = getattr(parsed_data, freq_id)
+                                    cpMes_id = 'cpMes_0' + str(gnss_id)
+                                    cpMes_id_name = getattr(parsed_data, cpMes_id)
 
-                                locktime_id = 'locktime_0' + str(gnss_id)
-                                locktime_id_name = getattr(parsed_data, locktime_id)
+                                    doMes_id = 'doMes_0' + str(gnss_id)
+                                    doMes_id_name = getattr(parsed_data, doMes_id)
 
-                                cno_id = 'cno_0' + str(gnss_id)
-                                cno_id_name = getattr(parsed_data, cno_id)
+                                    freq_id = 'freqId_0' + str(gnss_id)
+                                    freq_id_name = getattr(parsed_data, freq_id)
 
-                                prStdev_id = 'prStdev_0' + str(gnss_id)
-                                prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                    locktime_id = 'locktime_0' + str(gnss_id)
+                                    locktime_id_name = getattr(parsed_data, locktime_id)
 
-                                cpStdev_id = 'cpStdev_0' + str(gnss_id)
-                                cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                    cno_id = 'cno_0' + str(gnss_id)
+                                    cno_id_name = getattr(parsed_data, cno_id)
 
-                                doStdev_id = 'doStdev_0' + str(gnss_id)
-                                doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                    prStdev_id = 'prStdev_0' + str(gnss_id)
+                                    prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
 
-                                trkStat_id = 'trkStat_0' + str(gnss_id)
-                                trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                    cpStdev_id = 'cpStdev_0' + str(gnss_id)
+                                    cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
 
-                                reserved2_id = 'reserved2_0' + str(gnss_id)
-                                reserved2_id_name = getattr(parsed_data, reserved2_id)
+                                    doStdev_id = 'doStdev_0' + str(gnss_id)
+                                    doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
 
-                                fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
-                                              'freqId', 'locktime', 'cno']
-                                if not csv_name_3 in self.csv_list_3:
-                                    self.csv_list_3.append(csv_name_3)
-                                    with open(csv_name_3, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writeheader()
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-                                else:
-                                    with open(csv_name_3, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                    trkStat_id = 'trkStat_0' + str(gnss_id)
+                                    trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
 
-                            if gnss_name == "BeiDou":
-                                gnss_sv_id = 'svId_0' + str(gnss_id)
-                                gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
-                                gnss_sig_id = 'sigId_0' + str(gnss_id)
-                                gnss_sig_id_name = BEIDOUSIGLIST[getattr(parsed_data, gnss_sig_id)]
-                                csv_name_4 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
-                                    gnss_sv_id_name) + ".csv"
-                                # rcvTow_id = 'prMes_0' + str(gnss_id)
-                                # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
-                                #
-                                # week_id = 'prMes_0' + str(gnss_id)
-                                # week_id_name = getattr(parsed_data, week_id)
-                                #
-                                # leapS_id = 'prMes_0' + str(gnss_id)
-                                # leapS_id_name = getattr(parsed_data, leapS_id)
-                                prMes_id = 'prMes_0' + str(gnss_id)
-                                prMes_id_name = getattr(parsed_data, prMes_id)
+                                    reserved2_id = 'reserved2_0' + str(gnss_id)
+                                    reserved2_id_name = getattr(parsed_data, reserved2_id)
 
-                                cpMes_id = 'cpMes_0' + str(gnss_id)
-                                cpMes_id_name = getattr(parsed_data, cpMes_id)
+                                    fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
+                                                  'freqId', 'locktime', 'cno']
+                                    if not csv_name_3 in self.csv_list_3:
+                                        self.csv_list_3.append(csv_name_3)
+                                        with open(csv_name_3, 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writeheader()
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                    else:
+                                        with open(csv_name_3, 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
-                                doMes_id = 'doMes_0' + str(gnss_id)
-                                doMes_id_name = getattr(parsed_data, doMes_id)
+                                if gnss_name == "BeiDou":
+                                    gnss_sv_id = 'svId_0' + str(gnss_id)
+                                    gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
+                                    gnss_sig_id = 'sigId_0' + str(gnss_id)
 
-                                freq_id = 'freqId_0' + str(gnss_id)
-                                freq_id_name = getattr(parsed_data, freq_id)
+                                    try:
+                                        gnss_sig_id_name = BEIDOUSIGLIST[getattr(parsed_data, gnss_sig_id)]
 
-                                locktime_id = 'locktime_0' + str(gnss_id)
-                                locktime_id_name = getattr(parsed_data, locktime_id)
+                                        csv_name_4 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
+                                            gnss_sv_id_name) + ".csv"
+                                        # rcvTow_id = 'prMes_0' + str(gnss_id)
+                                        # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
+                                        #
+                                        # week_id = 'prMes_0' + str(gnss_id)
+                                        # week_id_name = getattr(parsed_data, week_id)
+                                        #
+                                        # leapS_id = 'prMes_0' + str(gnss_id)
+                                        # leapS_id_name = getattr(parsed_data, leapS_id)
+                                        prMes_id = 'prMes_0' + str(gnss_id)
+                                        prMes_id_name = getattr(parsed_data, prMes_id)
 
-                                cno_id = 'cno_0' + str(gnss_id)
-                                cno_id_name = getattr(parsed_data, cno_id)
+                                        cpMes_id = 'cpMes_0' + str(gnss_id)
+                                        cpMes_id_name = getattr(parsed_data, cpMes_id)
 
-                                prStdev_id = 'prStdev_0' + str(gnss_id)
-                                prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                        doMes_id = 'doMes_0' + str(gnss_id)
+                                        doMes_id_name = getattr(parsed_data, doMes_id)
 
-                                cpStdev_id = 'cpStdev_0' + str(gnss_id)
-                                cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                        freq_id = 'freqId_0' + str(gnss_id)
+                                        freq_id_name = getattr(parsed_data, freq_id)
 
-                                doStdev_id = 'doStdev_0' + str(gnss_id)
-                                doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                        locktime_id = 'locktime_0' + str(gnss_id)
+                                        locktime_id_name = getattr(parsed_data, locktime_id)
 
-                                trkStat_id = 'trkStat_0' + str(gnss_id)
-                                trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                        cno_id = 'cno_0' + str(gnss_id)
+                                        cno_id_name = getattr(parsed_data, cno_id)
 
-                                reserved2_id = 'reserved2_0' + str(gnss_id)
-                                reserved2_id_name = getattr(parsed_data, reserved2_id)
+                                        prStdev_id = 'prStdev_0' + str(gnss_id)
+                                        prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
 
-                                fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
-                                              'freqId', 'locktime', 'cno']
-                                if not csv_name_4 in self.csv_list_4:
-                                    self.csv_list_4.append(csv_name_4)
-                                    with open(csv_name_4, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writeheader()
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-                                else:
-                                    with open(csv_name_4, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                        cpStdev_id = 'cpStdev_0' + str(gnss_id)
+                                        cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
 
-                            if gnss_name == "QZSS":
-                                gnss_sv_id = 'svId_0' + str(gnss_id)
-                                gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
-                                gnss_sig_id = 'sigId_0' + str(gnss_id)
-                                gnss_sig_id_name = QZSSSIGLIST[getattr(parsed_data, gnss_sig_id)]
-                                csv_name_5 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
-                                    gnss_sv_id_name) + ".csv"
-                                # rcvTow_id = 'prMes_0' + str(gnss_id)
-                                # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
-                                #
-                                # week_id = 'prMes_0' + str(gnss_id)
-                                # week_id_name = getattr(parsed_data, week_id)
-                                #
-                                # leapS_id = 'prMes_0' + str(gnss_id)
-                                # leapS_id_name = getattr(parsed_data, leapS_id)
-                                prMes_id = 'prMes_0' + str(gnss_id)
-                                prMes_id_name = getattr(parsed_data, prMes_id)
+                                        doStdev_id = 'doStdev_0' + str(gnss_id)
+                                        doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
 
-                                cpMes_id = 'cpMes_0' + str(gnss_id)
-                                cpMes_id_name = getattr(parsed_data, cpMes_id)
+                                        trkStat_id = 'trkStat_0' + str(gnss_id)
+                                        trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
 
-                                doMes_id = 'doMes_0' + str(gnss_id)
-                                doMes_id_name = getattr(parsed_data, doMes_id)
+                                        reserved2_id = 'reserved2_0' + str(gnss_id)
+                                        reserved2_id_name = getattr(parsed_data, reserved2_id)
 
-                                freq_id = 'freqId_0' + str(gnss_id)
-                                freq_id_name = getattr(parsed_data, freq_id)
+                                        fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
+                                                      'freqId', 'locktime', 'cno']
+                                        if not csv_name_4 in self.csv_list_4:
+                                            self.csv_list_4.append(csv_name_4)
+                                            with open(csv_name_4, 'a+', newline='') as file:
+                                                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                                writer.writeheader()
+                                                writer.writerow({
+                                                    'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                    'leapS': parsed_data.leapS,
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                        else:
+                                            with open(csv_name_4, 'a+', newline='') as file:
+                                                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                                writer.writerow({
+                                                    'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                    'leapS': parsed_data.leapS,
+                                                    'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                    'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
 
-                                locktime_id = 'locktime_0' + str(gnss_id)
-                                locktime_id_name = getattr(parsed_data, locktime_id)
+                                    except KeyError as key_err_beid:
+                                        print(key_err_beid)
 
-                                cno_id = 'cno_0' + str(gnss_id)
-                                cno_id_name = getattr(parsed_data, cno_id)
+                                if gnss_name == "QZSS":
+                                    gnss_sv_id = 'svId_0' + str(gnss_id)
+                                    gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
+                                    gnss_sig_id = 'sigId_0' + str(gnss_id)
+                                    gnss_sig_id_name = QZSSSIGLIST[getattr(parsed_data, gnss_sig_id)]
 
-                                prStdev_id = 'prStdev_0' + str(gnss_id)
-                                prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+                                    if str(gnss_sig_id_name) == "QZSS L1C/A":
+                                        gnss_sig_id_name = "QZSS L1_CA"
 
-                                cpStdev_id = 'cpStdev_0' + str(gnss_id)
-                                cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+                                    csv_name_5 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
+                                        gnss_sv_id_name) + ".csv"
+                                    # rcvTow_id = 'prMes_0' + str(gnss_id)
+                                    # rcvTow_id_name = getattr(parsed_data, rcvTow_id)
+                                    #
+                                    # week_id = 'prMes_0' + str(gnss_id)
+                                    # week_id_name = getattr(parsed_data, week_id)
+                                    #
+                                    # leapS_id = 'prMes_0' + str(gnss_id)
+                                    # leapS_id_name = getattr(parsed_data, leapS_id)
+                                    prMes_id = 'prMes_0' + str(gnss_id)
+                                    prMes_id_name = getattr(parsed_data, prMes_id)
 
-                                doStdev_id = 'doStdev_0' + str(gnss_id)
-                                doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+                                    cpMes_id = 'cpMes_0' + str(gnss_id)
+                                    cpMes_id_name = getattr(parsed_data, cpMes_id)
 
-                                trkStat_id = 'trkStat_0' + str(gnss_id)
-                                trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+                                    doMes_id = 'doMes_0' + str(gnss_id)
+                                    doMes_id_name = getattr(parsed_data, doMes_id)
 
-                                reserved2_id = 'reserved2_0' + str(gnss_id)
-                                reserved2_id_name = getattr(parsed_data, reserved2_id)
+                                    freq_id = 'freqId_0' + str(gnss_id)
+                                    freq_id_name = getattr(parsed_data, freq_id)
 
-                                fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
-                                              'freqId', 'locktime', 'cno']
-                                if not csv_name_5 in self.csv_list_5:
-                                    self.csv_list_5.append(csv_name_5)
+                                    locktime_id = 'locktime_0' + str(gnss_id)
+                                    locktime_id_name = getattr(parsed_data, locktime_id)
 
-                                    with open(csv_name_5, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writeheader()
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
-                                else:
-                                    with open(csv_name_5, 'a+', newline='') as file:
-                                        writer = csv.DictWriter(file, fieldnames=fieldnames)
-                                        writer.writerow({
-                                            'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
-                                            'leapS': parsed_data.leapS,
-                                            'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
-                                            'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                    cno_id = 'cno_0' + str(gnss_id)
+                                    cno_id_name = getattr(parsed_data, cno_id)
+
+                                    prStdev_id = 'prStdev_0' + str(gnss_id)
+                                    prStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, prStdev_id), ubt.U1)
+
+                                    cpStdev_id = 'cpStdev_0' + str(gnss_id)
+                                    cpStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, cpStdev_id), ubt.U1)
+
+                                    doStdev_id = 'doStdev_0' + str(gnss_id)
+                                    doStdev_id_name = parsed_data.bytes2val(getattr(parsed_data, doStdev_id), ubt.U1)
+
+                                    trkStat_id = 'trkStat_0' + str(gnss_id)
+                                    trkStat_id_name = parsed_data.bytes2val(getattr(parsed_data, trkStat_id), ubt.U1)
+
+                                    reserved2_id = 'reserved2_0' + str(gnss_id)
+                                    reserved2_id_name = getattr(parsed_data, reserved2_id)
+
+                                    fieldnames = ['rcvTow', 'week', 'leapS', 'prMes', 'cpMes', 'doMes',
+                                                  'freqId', 'locktime', 'cno']
+                                    if not csv_name_5 in self.csv_list_5:
+                                        self.csv_list_5.append(csv_name_5)
+                                        print(csv_name_5)
+
+                                        with open(str(csv_name_5), 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writeheader()
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+                                    else:
+                                        with open(csv_name_5, 'a+', newline='') as file:
+                                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                                            writer.writerow({
+                                                'rcvTow': parsed_data.rcvTow, 'week': parsed_data.week,
+                                                'leapS': parsed_data.leapS,
+                                                'prMes': prMes_id_name, 'cpMes': cpMes_id_name, 'doMes': doMes_id_name,
+                                                'freqId': freq_id_name, 'locktime': locktime_id_name, 'cno': cno_id_name})
+
+                            except KeyError as key_err_id:
+                                print(key_err_id)
 
                         for gnss_id in range(10, num_message + 1, 1):
                             gnss_message_id = 'gnssId_' + str(gnss_id)
@@ -3680,9 +3702,18 @@ class MainWindow(QtWidgets.QMainWindow):
                                 if gnss_name == "QZSS":
                                     gnss_sv_id = 'svId_' + str(gnss_id)
                                     gnss_sv_id_name = getattr(parsed_data, gnss_sv_id)
+                                    print(gnss_sv_id_name)
+
+
+
                                     gnss_sig_id = 'sigId_' + str(gnss_id)
                                     try:
                                         gnss_sig_id_name = QZSSSIGLIST[getattr(parsed_data, gnss_sig_id)]
+
+                                        if str(gnss_sig_id_name) == "QZSS L1C/A":
+                                            gnss_sig_id_name = "QZSS L1_CA"
+                                        print(gnss_sv_id_name)
+
                                         csv_name_5 = self.save_folder + "/" + str(gnss_sig_id_name) + " Sv_Id " + str(
                                             gnss_sv_id_name) + ".csv"
                                         # rcvTow_id = 'prMes_0' + str(gnss_id)

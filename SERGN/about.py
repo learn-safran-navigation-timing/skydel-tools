@@ -3,9 +3,9 @@ Skydel Extrapolator for Rinex GLONASS Navigation File - ABout dialog QT applicat
 
 Created on 14 06 2021
 
-:author: Grace Oulai
+:author: Grace Jean
 :copyright: Skydel © 2021
-:Version: 21.6.1
+:Version: 24.1.1
 """
 # Import
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -52,7 +52,7 @@ class UiAboutDialog(QDialog):
         self.tbClose.setMinimumSize(QtCore.QSize(40, 40))
         self.tbClose.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("resources/orolia_rgb.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("resources/Skydel-NewLogo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tbClose.setIcon(icon)
         self.tbClose.setIconSize(QtCore.QSize(25, 25))
 
@@ -67,7 +67,7 @@ class UiAboutDialog(QDialog):
         self.lblTitle.setStyleSheet('color: black')
         verticalLayout.addWidget(self.lblTitle)
         self.lblBuild = QtWidgets.QLabel()
-        self.lblBuild.setText("2021.6.1")
+        self.lblBuild.setText("2024.1.1")
         self.lblBuild.setStyleSheet('color: black')
         verticalLayout.addWidget(self.lblBuild)
         self.label_2 = QtWidgets.QLabel()

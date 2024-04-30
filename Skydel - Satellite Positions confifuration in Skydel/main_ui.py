@@ -11,6 +11,7 @@ import csv
 import sys
 import subprocess
 import shutil
+import qtmodern
 import qtmodern.styles
 import qtmodern.windows
 from PyQt5 import QtGui, QtCore
