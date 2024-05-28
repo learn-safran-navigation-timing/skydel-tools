@@ -14,6 +14,7 @@ Make sure python is installed (version 3.8 or later). If not, download the lates
 4. Run the following command to install the python packages:
 
 ` pip install requirements.txt`
+
 5. Start the python with:
 
 `python Main.py`
