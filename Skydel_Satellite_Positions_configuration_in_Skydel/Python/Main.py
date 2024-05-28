@@ -3,48 +3,25 @@ Skydel Extrapolator for Rinex GLONASS Navigation File - Main QT application clas
 Created on 14 06 2021
 :author: Grace Oulai
 :copyright: Skydel © 2021
-:Version: 21.8.0
+:Version: 24.5.0
 """
 # Import
-import glob
-import csv
-import sys
-import subprocess
-import shutil
-import qtmodern
 import qtmodern.styles
 import qtmodern.windows
 from PyQt5 import QtGui, QtCore
-from decimal import Decimal
-from PyQt5.QtWidgets import QLineEdit, QLabel, QDesktopWidget, QFileDialog, QMenuBar, QMessageBox
 from PyQt5.QtWidgets import QLineEdit, QLabel, QDesktopWidget, QFileDialog, QFormLayout, QGroupBox, QComboBox, QMenuBar
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import math
-from datetime import datetime
-from datetime import date
+from datetime import date, datetime
 from skydelsdx import *
 from skydelsdx.commands import *
 from csv import reader
-import math
-
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.pyplot import rc, grid, figure, plot, rcParams, savefig
 from math import radians
 
-from astropy.time import Time
-import numpy as np
-import astropy.units as unit
-import os
-from astroplan.plots import plot_sky
-from astroplan import FixedTarget
-from astroplan import FixedTarget
-from astropy.coordinates import SkyCoord
-import astropy.units as uni
-from astroplan import Observer
 
 def quit_app():
     sys.exit()

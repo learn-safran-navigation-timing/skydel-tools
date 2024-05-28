@@ -1,0 +1,6 @@
+PyQt5
+atroplan
+astropy
+qtmodern
+numpy
+matplotlib
