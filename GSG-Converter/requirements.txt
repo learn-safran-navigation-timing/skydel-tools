@@ -1,0 +1,8 @@
+PySide6
+qtmodern
+matplotlib
+numpy
+pandas
+pyproj
+pynmea2
+qtmodern
