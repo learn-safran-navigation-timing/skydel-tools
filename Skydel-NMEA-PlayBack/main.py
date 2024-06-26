@@ -310,7 +310,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     os.remove(path_to_file)
                     print("Removing file:", path_to_file)
                 except PermissionError as err:
-                    print(err)
                     QMessageBox.about(self, "DELETING CSV FILE ERROR", str(err))
 
     def pre_start(self):
@@ -364,8 +363,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.screen_1(self.save_folder)
 
         for fil in glob.glob(os.path.join(self.save_folder, '*.csv')):
-            print(fil)
-
             # Extract the file path to a variable
             file_path = os.path.join(self.save_folder, '*.csv')
 
@@ -395,7 +392,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 file = codecs.open(self.nmea_file_name, 'r', encoding='utf-8',
                                    errors='ignore')
 
-                rmc_fieldnames = ['Elapsed time (ms)', 'Timestamp', 'Status', 'Latitude', 'Latitude Direction',
+                rmc_fieldnames = ['Elapsed time (s)', 'Timestamp', 'Status', 'Latitude', 'Latitude Direction',
                                   'Longitude',
                                   'Longitude Direction',
                                   'Speed Over Ground', 'True Course', 'Datestamp', 'Magnetic Variation',
@@ -526,8 +523,6 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
 
             if msg.sentence_type == 'RMC':
-                print(repr(msg))
-
                 if msg.timestamp is None or msg.datestamp is None:
                     pass
                 else:
@@ -556,7 +551,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     rmc_mode_indicator = msg.mode_indicator
                     rmc_nav_status = msg.nav_status
 
-                    rmc_dict_values = {'Elapsed time (ms)': self.elapsed_second,
+                    rmc_dict_values = {'Elapsed time (s)': self.elapsed_second,
                                        "Timestamp": time_rmc,
                                        'Status': rmc_status,
                                        'Latitude': rmc_lat, 'Latitude Direction': rmc_lat_dir, 'Longitude': rmc_lon,
@@ -569,7 +564,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.rmc_csvfile_writer.writerow(rmc_dict_values)
 
             if msg.sentence_type == 'GGA':
-                print(repr(msg))
                 gga_timestamp = str(msg.timestamp)
 
                 if str(gga_timestamp) == "None":
@@ -659,13 +653,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.gga_time_writer.writerow(gga_time_dict)
 
                         gga_lat = msg.latitude
-                        print("GGA Latitude:", msg.latitude)
-
                         gga_lon = msg.longitude
-                        print("GGA Longitude:", msg.longitude)
-
                         gga_altitude = msg.altitude
-                        print("GGA Altitude:", gga_altitude)
 
                         if str(gga_altitude) <= "0":
                             gga_altitude = 0
@@ -1044,29 +1033,20 @@ class MainWindow(QtWidgets.QMainWindow):
                     snr_9 = ""
                     print(er)
 
-                print(self.elapsed_second)
-                print(self.elapsed_gga)
-
                 gsv_dict_values = {'Elapsed time': self.elapsed_gga, "GNSS ID": gnss_id,
                                    'Number of messages of type in cycle': gsv_num_messages,
                                    'Message Number': gsv_msg_num,
                                    'Total number of SVs in view': gsv_num_sv_in_view,
-                                   'sv_prn_num_1': sv_prn_num_1, 'elevation_deg_1': elevation_deg_1,
-                                   'azimuth_1': azimuth_1, 'snr_1': snr_1, 'sv_prn_num_2': sv_prn_num_2,
-                                   'elevation_deg_2': elevation_deg_2,
-                                   'azimuth_2': azimuth_2, 'snr_2': snr_2, 'sv_prn_num_3': sv_prn_num_3,
-                                   'elevation_deg_3': elevation_deg_3, 'azimuth_3': azimuth_3, 'snr_3': snr_3,
-                                   'sv_prn_num_4': sv_prn_num_4,
-                                   'elevation_deg_4': elevation_deg_4, 'azimuth_4': azimuth_4, 'snr_4': snr_4,
-                                   'sv_prn_num_5': sv_prn_num_5, 'elevation_deg_5': elevation_deg_5,
-                                   'azimuth_5': azimuth_5, 'snr_5': snr_5,
-                                   'sv_prn_num_6': sv_prn_num_6, 'elevation_deg_6': elevation_deg_6,
-                                   'azimuth_6': azimuth_6, 'snr_6': snr_6, 'sv_prn_num_7': sv_prn_num_7,
-                                   'elevation_deg_7': elevation_deg_7,
-                                   'azimuth_7': azimuth_7, 'snr_7': snr_7, 'sv_prn_num_8': sv_prn_num_8,
-                                   'elevation_deg_8': elevation_deg_8, 'azimuth_8': azimuth_8, 'snr_8': snr_8,
-                                   'sv_prn_num_9': sv_prn_num_9,
-                                   'elevation_deg_9': elevation_deg_9, 'azimuth_9': azimuth_9, 'snr_9': snr_9}
+                                   'sv_prn_num_1': sv_prn_num_1, 'elevation_deg_1': elevation_deg_1, 'azimuth_1': azimuth_1, 'snr_1': snr_1,
+                                   'sv_prn_num_2': sv_prn_num_2, 'elevation_deg_2': elevation_deg_2, 'azimuth_2': azimuth_2, 'snr_2': snr_2,
+                                   'sv_prn_num_3': sv_prn_num_3, 'elevation_deg_3': elevation_deg_3, 'azimuth_3': azimuth_3, 'snr_3': snr_3,
+                                   'sv_prn_num_4': sv_prn_num_4, 'elevation_deg_4': elevation_deg_4, 'azimuth_4': azimuth_4, 'snr_4': snr_4,
+                                   'sv_prn_num_5': sv_prn_num_5, 'elevation_deg_5': elevation_deg_5, 'azimuth_5': azimuth_5, 'snr_5': snr_5,
+                                   'sv_prn_num_6': sv_prn_num_6, 'elevation_deg_6': elevation_deg_6, 'azimuth_6': azimuth_6, 'snr_6': snr_6,
+                                   'sv_prn_num_7': sv_prn_num_7, 'elevation_deg_7': elevation_deg_7, 'azimuth_7': azimuth_7, 'snr_7': snr_7,
+                                   'sv_prn_num_8': sv_prn_num_8, 'elevation_deg_8': elevation_deg_8, 'azimuth_8': azimuth_8, 'snr_8': snr_8,
+                                   'sv_prn_num_9': sv_prn_num_9, 'elevation_deg_9': elevation_deg_9, 'azimuth_9': azimuth_9, 'snr_9': snr_9
+                                   }
 
                 self.gsv_csvfile_writer.writerow(gsv_dict_values)
 
@@ -1169,7 +1149,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.playback_button.setEnabled(True)
         self.global_output_val = output_val
-        print(self.global_output_val)
         return output_val
 
     def playback_skydel_2(self):
@@ -1223,9 +1202,6 @@ class MainWindow(QtWidgets.QMainWindow):
                             start_date = time_line[9]
                             break
 
-                    print("Start Time:", start_time)
-                    print("Start date:", start_date)
-
                     if "-" in start_date:
                         start_date = start_date.split("-")
                     elif "/" in start_date:
@@ -1257,8 +1233,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.sim.call(SetVehicleTrajectory("Track"))
 
                 def push_track_node(sim, timestampsec, latdeg, londeg, altmet):
-                    print(int(float(timestampsec)),
-                          Lla(toRadian(float(latdeg)), toRadian(float(londeg)), float((altmet))))
                     timestamp_msec = int(float(timestampsec))
                     sim.pushTrackLla(timestamp_msec,
                                      Lla(toRadian(float(latdeg)), toRadian(float(londeg)), float((altmet))))
@@ -1282,13 +1256,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         if line[0] == "" or line[1] == "" or line[2] == "" or line[3] == "" or line[
                             4] == "" or "Latitude" in line:
                             cnt_no_track = cnt_no_track + 1
-
                             pass
 
                         else:
-                            print(str(line[0]), str(line[2]), str(line[3]),
-                                  str(line[4]))
-
                             push_track_node(self.sim, int(float(line[0])), str(line[2]), str(line[3]),
                                             str(line[4]))
 
@@ -1331,15 +1301,12 @@ class MainWindow(QtWidgets.QMainWindow):
             gnss = []
 
             for col in gsv_gnss:
-                print(col)
                 gnss.append(col['GNSS ID'])
 
             result = []
             [result.append(x) for x in gnss if x not in result]
-            print(result)
 
             self.list_GNSS_ID = result
-            print(self.list_GNSS_ID)
             sv_dict = {}
 
             self.screen_1("\n")
@@ -1433,7 +1400,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.sim.call(
                     ChangeModulationTargetSignals(0, 12500000, 125000000, "UpperL", gnss_list_up, 50, True,
                                                   "uniqueId", None))
-
             else:
                 print(" No selected Output")
 
@@ -1574,8 +1540,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     [s_v_result.append(s_v) for s_v in list_sv if s_v not in s_v_result]
 
-                    print(s_v_result)
-
                     for sv_2 in s_v_result:
                         #
                         if GNSS == "SBAS" and int(sv_2) > 39:
@@ -1590,29 +1554,21 @@ class MainWindow(QtWidgets.QMainWindow):
                                 s_v_result.remove(str(sv_2))
 
                     sv_dict.update({str(GNSS): s_v_result})
-                    print(s_v_result)
-                    print(sv_dict)
-
-                print(self.list_GNSS_ID)
 
                 for GNSS in self.list_GNSS_ID:
-                    print(GNSS)
                     self.sim.call(
                         EnableRFOutputForSV(str(GNSS), 0, False))
 
                     list_sv_enable = sv_dict[str(GNSS)]
-                    print(GNSS, list_sv_enable)
 
                     for sv_to_enable in list_sv_enable:
 
                         if GNSS == "SBAS":
-                            print(sv_to_enable)
                             if int(sv_to_enable) < 1 or int(sv_to_enable) > 39:
                                 list_sv_enable.remove(str(sv_to_enable))
                                 break
 
                         if GNSS == "GPS":
-                            print(sv_to_enable)
                             if int(sv_to_enable) < 1 or int(sv_to_enable) > 32:
                                 list_sv_enable.remove(str(sv_to_enable))
                                 break
@@ -1639,46 +1595,68 @@ class MainWindow(QtWidgets.QMainWindow):
                         reader = csv.reader(f, delimiter=",")
                         next(reader, None)
 
+                        """ Elapsed time --> line[0]
+                            GNSS ID --> line[1]
+                            Number of messages of type in cycle --> line[2]
+                            Message Number --> line[3]
+                            Total number of SVs in view --> line[4]
+                            sv_prn_num_1 --> line[5]
+                            elevation_deg_1 --> line[6]
+                            azimuth_1 --> line[7]
+                            snr_1 --> line[8]
+                            sv_prn_num_2 --> line[9]
+                            elevation_deg_2 --> line[10]
+                            azimuth_2 --> line[11]
+                            snr_2 --> line[12]
+                            etc.
+                        """
+
                         for i, line in enumerate(reader):
-                            if str(line[5]) == "" or str(line[8]) == "":
+
+                            if str(line[5]) == "" or str(line[8]) == "" or str(line[0]) == "":
                                 pass
                             else:
+                                elp_time = float(str(line[0]))/1000
                                 self.sim.post(
                                     SetManualPowerOffsetForSV(str(line[1]), int(line[5]), {"All": int(line[8]) - 44},
                                                               False),
-                                    float(str(line[0])))
+                                    elp_time)
 
-                            if str(line[9]) == "" or str(line[12]) == "":
+                            if str(line[9]) == "" or str(line[12]) == "" or str(line[0]) == "":
                                 pass
                             else:
+                                elp_time = float(str(line[0]))/1000
                                 self.sim.post(
                                     SetManualPowerOffsetForSV(str(line[1]), int(line[9]), {"All": int(line[12]) - 44},
                                                               False),
-                                    float(line[0]))
+                                    elp_time)
 
-                            if str(line[13]) == "" or str(line[16]) == "":
+                            if str(line[13]) == "" or str(line[16]) == "" or str(line[0]) == "":
                                 pass
                             else:
+                                elp_time = float(str(line[0]))/1000
                                 self.sim.post(
                                     SetManualPowerOffsetForSV(str(line[1]), int(line[13]), {"All": int(line[16]) - 44},
                                                               False),
-                                    float(line[0]))
+                                    elp_time)
 
-                            if str(line[17]) == "" or str(line[20]) == "":
+                            if str(line[17]) == "" or str(line[20]) == "" or str(line[0]) == "":
                                 pass
                             else:
+                                elp_time = float(str(line[0]))/1000
                                 self.sim.post(
                                     SetManualPowerOffsetForSV(str(line[1]), int(line[17]), {"All": int(line[20]) - 44},
                                                               False),
-                                    float(line[0]))
+                                    elp_time)
 
-                            if str(line[21]) == "" or str(line[24]) == "":
+                            if str(line[21]) == "" or str(line[24]) == "" or str(line[0]) == "":
                                 pass
                             else:
+                                elp_time = float(str(line[0]))/1000
                                 self.sim.post(
                                     SetManualPowerOffsetForSV(str(line[1]), int(line[21]), {"All": int(line[24]) - 44},
                                                               False),
-                                    float(line[0]))
+                                    elp_time)
 
                     self.screen_1("\n")
                     self.screen_1("Skydel is now ready...")
@@ -1706,7 +1684,6 @@ class MainWindow(QtWidgets.QMainWindow):
                               str(typ_err_10))
 
     def stop_streaming_func(self):
-
         self.running_stop = True
 
 
@@ -1714,7 +1691,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
     # w.show()
-    qtmodern.styles.dark(app)
+    qtmodern.styles.light(app) # dark mode: qtmodern.styles.dark(app)
     mw = qtmodern.windows.ModernWindow(w)
     mw.show()
     sys.exit(app.exec_())
