@@ -1,0 +1,8 @@
+PyQt5
+qtmodern
+numpy
+Pillow
+QtPy
+setuptools
+scipy
+matplotlib
