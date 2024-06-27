@@ -1269,7 +1269,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                       "The trajectory file is empty. No trajectory was set on Skydel.")
                 else:
                     QMessageBox.about(self, "SKYDEL SIGNAL",
-                                      "The trajectory is ready. Please select your signals in Skydel and press the "
+                                      "The trajectory is ready. Please select the signals in Skydel and press the "
                                       "Arm/STart button.")
 
             except ConnectionRefusedError as skydel_connect_err:
@@ -1279,7 +1279,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             except FileNotFoundError as fil_err:
                 QMessageBox.about(self, "MISSING FILE ERROR",
-                                  str(fil_err) + ". Please make sure your folder contains all playback files")
+                                  str(fil_err) + ". Please make sure the folder contains all playback files")
 
         self.screen_1("\n")
         self.screen_1("Arming Skydel...")
@@ -1297,7 +1297,6 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             gsv_open = open(self.gsv_file, 'r')
             gsv_gnss = csv.DictReader(gsv_open)
-            # gsv_file_object = csv.reader(gsv_open)
             gnss = []
 
             for col in gsv_gnss:
