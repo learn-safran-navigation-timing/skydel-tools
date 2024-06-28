@@ -4,14 +4,14 @@
 
 ### Installation:
 1) Make sure python is install (from version 3.8) or download the latest python version from https://www.python.org/downloads/.
+
 2) Open a terminal and check the installation:
-
 ```python –version (or python3 –version for Linux platform)```
+
 3) Install the python packages:
-
 ```pip install -r requirements.txt.```
-3) Run the Downlink parser script:
 
+4) Run the Downlink parser script:
 ```python main_ui.py```
 
 ### Usage:
