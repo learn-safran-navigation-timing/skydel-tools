@@ -18,7 +18,9 @@ from PyQt5.QtWidgets import QMessageBox
 
 import argparse
 import sys
-from downlink_parser import decode_gps, decode_galileo, decode_beidou, decode_glonass, decode_sbas, decode_qzss, decode_navic
+from downlink_parser import decode_gps, decode_galileo, decode_beidou, decode_glonass, decode_sbas, decode_qzss, \
+    decode_navic
+
 
 class SkydelDecoder(object):
     # Utility to convert signal to navigation message family
@@ -88,7 +90,7 @@ class SkydelDecoder(object):
         # if signal in ['SBASL1', 'SBASL5']:
         #     return 'SBAS_NAV'
 
-    #With NAVICS
+        #With NAVICS
         if signal in ['L1CA', 'L1P', 'L2P']:
             return 'GPS_LNAV'
         if signal in ['L2C', 'L5']:
@@ -115,8 +117,12 @@ class SkydelDecoder(object):
             return 'QZSS_CNAV'
         if signal in ['QZSSL1C']:
             return 'QZSS_CNAV2'
+        if signal in ['QZSSL6']:
+            return 'QZSS_CLAS'
         if signal in ['NAVICL5', 'NAVICS']:
             return 'NAVIC_NAV'
+        if signal in ['NAVICL1']:
+            return 'NAVIC_L1'
         if signal in ['SBASL1', 'SBASL5']:
             return 'SBAS_NAV'
 
@@ -131,7 +137,8 @@ class SkydelDecoder(object):
             output.write(f"{key},{value['range']},{value['binary']},{value['decimal']},{value['unit']}\n")
         output.write("\n")
 
-    def write_decoded_downlink(self, input_path, output, decoders, downlink_type, nav_msg_family, write_original_line=True):
+    def write_decoded_downlink(self, input_path, output, decoders, downlink_type, nav_msg_family,
+                               write_original_line=True):
         content = self.get_input_content(input_path)
         input_iterator = iter(content)
 
@@ -165,8 +172,9 @@ class SkydelDecoder(object):
                             'SBAS_NAV': decode_sbas.getDictSBASL1NavigationMessage,
                             'QZSS_LNAV': decode_qzss.getDictQZSSL1CADecodedNavigationMessage,
                             'QZSS_SLAS': decode_qzss.getDictQZSSL1SDecodedNavigationMessage,
-                            #'QZSS_CLAS': decode_qzss.getDictQZSSL6DecodedNavigationMessage,
-                            'NAVIC_NAV': decode_navic.getDictNavICNAVNavigationMessage}
+                            'QZSS_CLAS': decode_qzss.getDictQZSSL6DecodedNavigationMessage,
+                            'NAVIC_NAV': decode_navic.getDictNavICNAVNavigationMessage,
+                            'NAVIC_L1': decode_navic.getDictNavICL1NavigationMessage}
 
         encoded_decoders = {'GPS_LNAV': decode_gps.getDictGPSL1CAEncodedNavigationMessage,
                             'GPS_CNAV2': decode_gps.getDictGPSL1CEncodedNavigationMessage,
@@ -183,7 +191,7 @@ class SkydelDecoder(object):
                 'PARTIAL': partial_decoders}
 
     def get_parser(self, decoders):
-        nav_msg_families = list(dict.fromkeys([key for values in decoders.values() for key in values.keys()]))
+        #nav_msg_families = list(dict.fromkeys([key for values in decoders.values() for key in values.keys()]))
         nav_msg_families = list(dict.fromkeys([key for values in decoders.values() for key in values.keys()]))
         decoder_types = [key for key in decoders.keys()]
         parser = argparse.ArgumentParser(description="Decode a downlink file")
@@ -211,6 +219,7 @@ class SkydelDecoder(object):
         else:
             # return open(args.output, 'w')
             return open(output_path, 'w')
+
 
 class Ui_MainWindow(object):
 
@@ -393,15 +402,15 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         MainWindow.setFont(font)
         MainWindow.setStyleSheet("QMainWindow {background: transparent; }\n"
-"QToolTip {\n"
-"    color: #ffffff;\n"
-"    background-color: rgba(27, 29, 35, 160);\n"
-"    border: 1px solid rgb(40, 40, 40);\n"
-"    border-radius: 2px;\n"
-"}")
+                                 "QToolTip {\n"
+                                 "    color: #ffffff;\n"
+                                 "    background-color: rgba(27, 29, 35, 160);\n"
+                                 "    border: 1px solid rgb(40, 40, 40);\n"
+                                 "    border-radius: 2px;\n"
+                                 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("background: transparent;\n"
-"color: rgb(210, 210, 210);")
+                                         "color: rgb(210, 210, 210);")
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setContentsMargins(10, 10, 10, 10)
@@ -409,210 +418,210 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame_main = QtWidgets.QFrame(self.centralwidget)
         self.frame_main.setStyleSheet("/* LINE EDIT */\n"
-"QLineEdit {\n"
-"    background-color: rgb(27, 29, 35);\n"
-"    border-radius: 5px;\n"
-"    border: 2px solid rgb(27, 29, 35);\n"
-"    padding-left: 10px;\n"
-"}\n"
-"QLineEdit:hover {\n"
-"    border: 2px solid rgb(64, 71, 88);\n"
-"}\n"
-"QLineEdit:focus {\n"
-"    border: 2px solid rgb(91, 101, 124);\n"
-"}\n"
-"\n"
-"/* SCROLL BARS */\n"
-"QScrollBar:horizontal {\n"
-"    border: none;\n"
-"    background: rgb(52, 59, 72);\n"
-"    height: 14px;\n"
-"    margin: 0px 21px 0 21px;\n"
-"    border-radius: 0px;\n"
-"}\n"
-"QScrollBar::handle:horizontal {\n"
-"    background: rgb(85, 170, 255);\n"
-"    min-width: 25px;\n"
-"    border-radius: 7px\n"
-"}\n"
-"QScrollBar::add-line:horizontal {\n"
-"    border: none;\n"
-"    background: rgb(55, 63, 77);\n"
-"    width: 20px;\n"
-"    border-top-right-radius: 7px;\n"
-"    border-bottom-right-radius: 7px;\n"
-"    subcontrol-position: right;\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QScrollBar::sub-line:horizontal {\n"
-"    border: none;\n"
-"    background: rgb(55, 63, 77);\n"
-"    width: 20px;\n"
-"    border-top-left-radius: 7px;\n"
-"    border-bottom-left-radius: 7px;\n"
-"    subcontrol-position: left;\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal\n"
-"{\n"
-"     background: none;\n"
-"}\n"
-"QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal\n"
-"{\n"
-"     background: none;\n"
-"}\n"
-" QScrollBar:vertical {\n"
-"    border: none;\n"
-"    background: rgb(52, 59, 72);\n"
-"    width: 14px;\n"
-"    margin: 21px 0 21px 0;\n"
-"    border-radius: 0px;\n"
-" }\n"
-" QScrollBar::handle:vertical {    \n"
-"    background: rgb(85, 170, 255);\n"
-"    min-height: 25px;\n"
-"    border-radius: 7px\n"
-" }\n"
-" QScrollBar::add-line:vertical {\n"
-"     border: none;\n"
-"    background: rgb(55, 63, 77);\n"
-"     height: 20px;\n"
-"    border-bottom-left-radius: 7px;\n"
-"    border-bottom-right-radius: 7px;\n"
-"     subcontrol-position: bottom;\n"
-"     subcontrol-origin: margin;\n"
-" }\n"
-" QScrollBar::sub-line:vertical {\n"
-"    border: none;\n"
-"    background: rgb(55, 63, 77);\n"
-"     height: 20px;\n"
-"    border-top-left-radius: 7px;\n"
-"    border-top-right-radius: 7px;\n"
-"     subcontrol-position: top;\n"
-"     subcontrol-origin: margin;\n"
-" }\n"
-" QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {\n"
-"     background: none;\n"
-" }\n"
-"\n"
-" QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
-"     background: none;\n"
-" }\n"
-"\n"
-"/* CHECKBOX */\n"
-"QCheckBox::indicator {\n"
-"    border: 3px solid rgb(52, 59, 72);\n"
-"    width: 15px;\n"
-"    height: 15px;\n"
-"    border-radius: 10px;\n"
-"    background: rgb(44, 49, 60);\n"
-"}\n"
-"QCheckBox::indicator:hover {\n"
-"    border: 3px solid rgb(58, 66, 81);\n"
-"}\n"
-"QCheckBox::indicator:checked {\n"
-"    background: 3px solid rgb(52, 59, 72);\n"
-"    border: 3px solid rgb(52, 59, 72);    \n"
-"    background-image: url(:/16x16/icons/16x16/cil-check-alt.png);\n"
-"}\n"
-"\n"
-"/* RADIO BUTTON */\n"
-"QRadioButton::indicator {\n"
-"    border: 3px solid rgb(52, 59, 72);\n"
-"    width: 15px;\n"
-"    height: 15px;\n"
-"    border-radius: 10px;\n"
-"    background: rgb(44, 49, 60);\n"
-"}\n"
-"QRadioButton::indicator:hover {\n"
-"    border: 3px solid rgb(58, 66, 81);\n"
-"}\n"
-"QRadioButton::indicator:checked {\n"
-"    background: 3px solid rgb(94, 106, 130);\n"
-"    border: 3px solid rgb(52, 59, 72);    \n"
-"}\n"
-"\n"
-"/* COMBOBOX */\n"
-"QComboBox{\n"
-"    background-color: rgb(27, 29, 35);\n"
-"    border-radius: 5px;\n"
-"    border: 2px solid rgb(27, 29, 35);\n"
-"    padding: 5px;\n"
-"    padding-left: 10px;\n"
-"}\n"
-"QComboBox:hover{\n"
-"    border: 2px solid rgb(64, 71, 88);\n"
-"}\n"
-"QComboBox::drop-down {\n"
-"    subcontrol-origin: padding;\n"
-"    subcontrol-position: top right;\n"
-"    width: 25px; \n"
-"    border-left-width: 3px;\n"
-"    border-left-color: rgba(39, 44, 54, 150);\n"
-"    border-left-style: solid;\n"
-"    border-top-right-radius: 3px;\n"
-"    border-bottom-right-radius: 3px;    \n"
-"    background-image: url(:/16x16/icons/16x16/cil-arrow-bottom.png);\n"
-"    background-position: center;\n"
-"    background-repeat: no-reperat;\n"
-" }\n"
-"QComboBox QAbstractItemView {\n"
-"    color: rgb(85, 170, 255);    \n"
-"    background-color: rgb(27, 29, 35);\n"
-"    padding: 10px;\n"
-"    selection-background-color: rgb(39, 44, 54);\n"
-"}\n"
-"\n"
-"/* SLIDERS */\n"
-"QSlider::groove:horizontal {\n"
-"    border-radius: 9px;\n"
-"    height: 18px;\n"
-"    margin: 0px;\n"
-"    background-color: rgb(52, 59, 72);\n"
-"}\n"
-"QSlider::groove:horizontal:hover {\n"
-"    background-color: rgb(55, 62, 76);\n"
-"}\n"
-"QSlider::handle:horizontal {\n"
-"    background-color: rgb(85, 170, 255);\n"
-"    border: none;\n"
-"    height: 18px;\n"
-"    width: 18px;\n"
-"    margin: 0px;\n"
-"    border-radius: 9px;\n"
-"}\n"
-"QSlider::handle:horizontal:hover {\n"
-"    background-color: rgb(105, 180, 255);\n"
-"}\n"
-"QSlider::handle:horizontal:pressed {\n"
-"    background-color: rgb(65, 130, 195);\n"
-"}\n"
-"\n"
-"QSlider::groove:vertical {\n"
-"    border-radius: 9px;\n"
-"    width: 18px;\n"
-"    margin: 0px;\n"
-"    background-color: rgb(52, 59, 72);\n"
-"}\n"
-"QSlider::groove:vertical:hover {\n"
-"    background-color: rgb(55, 62, 76);\n"
-"}\n"
-"QSlider::handle:vertical {\n"
-"    background-color: rgb(85, 170, 255);\n"
-"    border: none;\n"
-"    height: 18px;\n"
-"    width: 18px;\n"
-"    margin: 0px;\n"
-"    border-radius: 9px;\n"
-"}\n"
-"QSlider::handle:vertical:hover {\n"
-"    background-color: rgb(105, 180, 255);\n"
-"}\n"
-"QSlider::handle:vertical:pressed {\n"
-"    background-color: rgb(65, 130, 195);\n"
-"}\n"
-"\n"
-"")
+                                      "QLineEdit {\n"
+                                      "    background-color: rgb(27, 29, 35);\n"
+                                      "    border-radius: 5px;\n"
+                                      "    border: 2px solid rgb(27, 29, 35);\n"
+                                      "    padding-left: 10px;\n"
+                                      "}\n"
+                                      "QLineEdit:hover {\n"
+                                      "    border: 2px solid rgb(64, 71, 88);\n"
+                                      "}\n"
+                                      "QLineEdit:focus {\n"
+                                      "    border: 2px solid rgb(91, 101, 124);\n"
+                                      "}\n"
+                                      "\n"
+                                      "/* SCROLL BARS */\n"
+                                      "QScrollBar:horizontal {\n"
+                                      "    border: none;\n"
+                                      "    background: rgb(52, 59, 72);\n"
+                                      "    height: 14px;\n"
+                                      "    margin: 0px 21px 0 21px;\n"
+                                      "    border-radius: 0px;\n"
+                                      "}\n"
+                                      "QScrollBar::handle:horizontal {\n"
+                                      "    background: rgb(85, 170, 255);\n"
+                                      "    min-width: 25px;\n"
+                                      "    border-radius: 7px\n"
+                                      "}\n"
+                                      "QScrollBar::add-line:horizontal {\n"
+                                      "    border: none;\n"
+                                      "    background: rgb(55, 63, 77);\n"
+                                      "    width: 20px;\n"
+                                      "    border-top-right-radius: 7px;\n"
+                                      "    border-bottom-right-radius: 7px;\n"
+                                      "    subcontrol-position: right;\n"
+                                      "    subcontrol-origin: margin;\n"
+                                      "}\n"
+                                      "QScrollBar::sub-line:horizontal {\n"
+                                      "    border: none;\n"
+                                      "    background: rgb(55, 63, 77);\n"
+                                      "    width: 20px;\n"
+                                      "    border-top-left-radius: 7px;\n"
+                                      "    border-bottom-left-radius: 7px;\n"
+                                      "    subcontrol-position: left;\n"
+                                      "    subcontrol-origin: margin;\n"
+                                      "}\n"
+                                      "QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal\n"
+                                      "{\n"
+                                      "     background: none;\n"
+                                      "}\n"
+                                      "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal\n"
+                                      "{\n"
+                                      "     background: none;\n"
+                                      "}\n"
+                                      " QScrollBar:vertical {\n"
+                                      "    border: none;\n"
+                                      "    background: rgb(52, 59, 72);\n"
+                                      "    width: 14px;\n"
+                                      "    margin: 21px 0 21px 0;\n"
+                                      "    border-radius: 0px;\n"
+                                      " }\n"
+                                      " QScrollBar::handle:vertical {    \n"
+                                      "    background: rgb(85, 170, 255);\n"
+                                      "    min-height: 25px;\n"
+                                      "    border-radius: 7px\n"
+                                      " }\n"
+                                      " QScrollBar::add-line:vertical {\n"
+                                      "     border: none;\n"
+                                      "    background: rgb(55, 63, 77);\n"
+                                      "     height: 20px;\n"
+                                      "    border-bottom-left-radius: 7px;\n"
+                                      "    border-bottom-right-radius: 7px;\n"
+                                      "     subcontrol-position: bottom;\n"
+                                      "     subcontrol-origin: margin;\n"
+                                      " }\n"
+                                      " QScrollBar::sub-line:vertical {\n"
+                                      "    border: none;\n"
+                                      "    background: rgb(55, 63, 77);\n"
+                                      "     height: 20px;\n"
+                                      "    border-top-left-radius: 7px;\n"
+                                      "    border-top-right-radius: 7px;\n"
+                                      "     subcontrol-position: top;\n"
+                                      "     subcontrol-origin: margin;\n"
+                                      " }\n"
+                                      " QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {\n"
+                                      "     background: none;\n"
+                                      " }\n"
+                                      "\n"
+                                      " QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
+                                      "     background: none;\n"
+                                      " }\n"
+                                      "\n"
+                                      "/* CHECKBOX */\n"
+                                      "QCheckBox::indicator {\n"
+                                      "    border: 3px solid rgb(52, 59, 72);\n"
+                                      "    width: 15px;\n"
+                                      "    height: 15px;\n"
+                                      "    border-radius: 10px;\n"
+                                      "    background: rgb(44, 49, 60);\n"
+                                      "}\n"
+                                      "QCheckBox::indicator:hover {\n"
+                                      "    border: 3px solid rgb(58, 66, 81);\n"
+                                      "}\n"
+                                      "QCheckBox::indicator:checked {\n"
+                                      "    background: 3px solid rgb(52, 59, 72);\n"
+                                      "    border: 3px solid rgb(52, 59, 72);    \n"
+                                      "    background-image: url(:/16x16/icons/16x16/cil-check-alt.png);\n"
+                                      "}\n"
+                                      "\n"
+                                      "/* RADIO BUTTON */\n"
+                                      "QRadioButton::indicator {\n"
+                                      "    border: 3px solid rgb(52, 59, 72);\n"
+                                      "    width: 15px;\n"
+                                      "    height: 15px;\n"
+                                      "    border-radius: 10px;\n"
+                                      "    background: rgb(44, 49, 60);\n"
+                                      "}\n"
+                                      "QRadioButton::indicator:hover {\n"
+                                      "    border: 3px solid rgb(58, 66, 81);\n"
+                                      "}\n"
+                                      "QRadioButton::indicator:checked {\n"
+                                      "    background: 3px solid rgb(94, 106, 130);\n"
+                                      "    border: 3px solid rgb(52, 59, 72);    \n"
+                                      "}\n"
+                                      "\n"
+                                      "/* COMBOBOX */\n"
+                                      "QComboBox{\n"
+                                      "    background-color: rgb(27, 29, 35);\n"
+                                      "    border-radius: 5px;\n"
+                                      "    border: 2px solid rgb(27, 29, 35);\n"
+                                      "    padding: 5px;\n"
+                                      "    padding-left: 10px;\n"
+                                      "}\n"
+                                      "QComboBox:hover{\n"
+                                      "    border: 2px solid rgb(64, 71, 88);\n"
+                                      "}\n"
+                                      "QComboBox::drop-down {\n"
+                                      "    subcontrol-origin: padding;\n"
+                                      "    subcontrol-position: top right;\n"
+                                      "    width: 25px; \n"
+                                      "    border-left-width: 3px;\n"
+                                      "    border-left-color: rgba(39, 44, 54, 150);\n"
+                                      "    border-left-style: solid;\n"
+                                      "    border-top-right-radius: 3px;\n"
+                                      "    border-bottom-right-radius: 3px;    \n"
+                                      "    background-image: url(:/16x16/icons/16x16/cil-arrow-bottom.png);\n"
+                                      "    background-position: center;\n"
+                                      "    background-repeat: no-reperat;\n"
+                                      " }\n"
+                                      "QComboBox QAbstractItemView {\n"
+                                      "    color: rgb(85, 170, 255);    \n"
+                                      "    background-color: rgb(27, 29, 35);\n"
+                                      "    padding: 10px;\n"
+                                      "    selection-background-color: rgb(39, 44, 54);\n"
+                                      "}\n"
+                                      "\n"
+                                      "/* SLIDERS */\n"
+                                      "QSlider::groove:horizontal {\n"
+                                      "    border-radius: 9px;\n"
+                                      "    height: 18px;\n"
+                                      "    margin: 0px;\n"
+                                      "    background-color: rgb(52, 59, 72);\n"
+                                      "}\n"
+                                      "QSlider::groove:horizontal:hover {\n"
+                                      "    background-color: rgb(55, 62, 76);\n"
+                                      "}\n"
+                                      "QSlider::handle:horizontal {\n"
+                                      "    background-color: rgb(85, 170, 255);\n"
+                                      "    border: none;\n"
+                                      "    height: 18px;\n"
+                                      "    width: 18px;\n"
+                                      "    margin: 0px;\n"
+                                      "    border-radius: 9px;\n"
+                                      "}\n"
+                                      "QSlider::handle:horizontal:hover {\n"
+                                      "    background-color: rgb(105, 180, 255);\n"
+                                      "}\n"
+                                      "QSlider::handle:horizontal:pressed {\n"
+                                      "    background-color: rgb(65, 130, 195);\n"
+                                      "}\n"
+                                      "\n"
+                                      "QSlider::groove:vertical {\n"
+                                      "    border-radius: 9px;\n"
+                                      "    width: 18px;\n"
+                                      "    margin: 0px;\n"
+                                      "    background-color: rgb(52, 59, 72);\n"
+                                      "}\n"
+                                      "QSlider::groove:vertical:hover {\n"
+                                      "    background-color: rgb(55, 62, 76);\n"
+                                      "}\n"
+                                      "QSlider::handle:vertical {\n"
+                                      "    background-color: rgb(85, 170, 255);\n"
+                                      "    border: none;\n"
+                                      "    height: 18px;\n"
+                                      "    width: 18px;\n"
+                                      "    margin: 0px;\n"
+                                      "    border-radius: 9px;\n"
+                                      "}\n"
+                                      "QSlider::handle:vertical:hover {\n"
+                                      "    background-color: rgb(105, 180, 255);\n"
+                                      "}\n"
+                                      "QSlider::handle:vertical:pressed {\n"
+                                      "    background-color: rgb(65, 130, 195);\n"
+                                      "}\n"
+                                      "\n"
+                                      "")
         self.frame_main.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_main.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_main.setObjectName("frame_main")
@@ -666,7 +675,7 @@ class Ui_MainWindow(object):
         self.frame_2 = QtWidgets.QFrame(self.page_widgets)
         self.frame_2.setMinimumSize(QtCore.QSize(0, 0))
         self.frame_2.setStyleSheet("background-color: rgb(39, 44, 54);\n"
-"border-radius: 5px;")
+                                   "border-radius: 5px;")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
@@ -694,18 +703,18 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.selct_file_btn.setFont(font)
         self.selct_file_btn.setStyleSheet("Qsave_btn {\n"
-                                      "    border: 2px solid rgb(52, 59, 72);\n"
-                                      "    border-radius: 5px;    \n"
-                                      "    background-color: rgb(52, 59, 72);\n"
-                                      "}\n"
-                                      "Qsave_btn:hover {\n"
-                                      "    background-color: rgb(57, 65, 80);\n"
-                                      "    border: 2px solid rgb(61, 70, 86);\n"
-                                      "}\n"
-                                      "Qsave_btn:pressed {    \n"
-                                      "    background-color: rgb(35, 40, 49);\n"
-                                      "    border: 2px solid rgb(43, 50, 61);\n"
-                                      "}")
+                                          "    border: 2px solid rgb(52, 59, 72);\n"
+                                          "    border-radius: 5px;    \n"
+                                          "    background-color: rgb(52, 59, 72);\n"
+                                          "}\n"
+                                          "Qsave_btn:hover {\n"
+                                          "    background-color: rgb(57, 65, 80);\n"
+                                          "    border: 2px solid rgb(61, 70, 86);\n"
+                                          "}\n"
+                                          "Qsave_btn:pressed {    \n"
+                                          "    background-color: rgb(35, 40, 49);\n"
+                                          "    border: 2px solid rgb(43, 50, 61);\n"
+                                          "}")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/16x16/icons/16x16/cil-folder-open.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.selct_file_btn.setIcon(icon3)
@@ -724,7 +733,7 @@ class Ui_MainWindow(object):
         self.label_title.setAlignment(QtCore.Qt.AlignCenter)
         self.label_title.setObjectName("label_title")
         #self.gridLayout_2.addWidget(self.label_title, 1, 0, 1, 1)
-        self.gridLayout_2.addWidget(self.label_title, 1, 1, 1, 1, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
+        self.gridLayout_2.addWidget(self.label_title, 1, 1, 1, 1, QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
         self.verticalLayout_11.addLayout(self.gridLayout_2)
         self.verticalLayout_6.addWidget(self.frame_2)
         self.frame_3 = QtWidgets.QFrame(self.page_widgets)
@@ -813,18 +822,18 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.save_btn.setFont(font)
         self.save_btn.setStyleSheet("Qsave_btn {\n"
-                                      "    border: 2px solid rgb(52, 59, 72);\n"
-                                      "    border-radius: 5px;    \n"
-                                      "    background-color: rgb(52, 59, 72);\n"
-                                      "}\n"
-                                      "Qsave_btn:hover {\n"
-                                      "    background-color: rgb(57, 65, 80);\n"
-                                      "    border: 2px solid rgb(61, 70, 86);\n"
-                                      "}\n"
-                                      "Qsave_btn:pressed {    \n"
-                                      "    background-color: rgb(35, 40, 49);\n"
-                                      "    border: 2px solid rgb(43, 50, 61);\n"
-                                      "}")
+                                    "    border: 2px solid rgb(52, 59, 72);\n"
+                                    "    border-radius: 5px;    \n"
+                                    "    background-color: rgb(52, 59, 72);\n"
+                                    "}\n"
+                                    "Qsave_btn:hover {\n"
+                                    "    background-color: rgb(57, 65, 80);\n"
+                                    "    border: 2px solid rgb(61, 70, 86);\n"
+                                    "}\n"
+                                    "Qsave_btn:pressed {    \n"
+                                    "    background-color: rgb(35, 40, 49);\n"
+                                    "    border: 2px solid rgb(43, 50, 61);\n"
+                                    "}")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/16x16/icons/16x16/cil-folder-open.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.save_btn.setIcon(icon3)
@@ -835,7 +844,7 @@ class Ui_MainWindow(object):
         self.status_lbl = QtWidgets.QLabel(self.frame)
         self.status_lbl.setFont(font)
         self.status_lbl.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.status_lbl.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignHCenter)
+        self.status_lbl.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignHCenter)
         self.status_lbl.setObjectName("status_lbl")
         self.verticalLayout_13.addWidget(self.status_lbl)
 
@@ -876,17 +885,17 @@ class Ui_MainWindow(object):
         font.setFamily("Segoe UI")
         self.label_version.setFont(font)
         self.label_version.setStyleSheet("color: rgb(98, 103, 111);")
-        self.label_version.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_version.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_version.setObjectName("label_version")
         self.horizontalLayout_7.addWidget(self.label_version)
         self.horizontalLayout_6.addWidget(self.frame_label_bottom)
         self.frame_size_grip = QtWidgets.QFrame(self.frame_grip)
         self.frame_size_grip.setMaximumSize(QtCore.QSize(20, 20))
         self.frame_size_grip.setStyleSheet("QSizeGrip {\n"
-"    background-image: url(:/16x16/icons/16x16/cil-size-grip.png);\n"
-"    background-position: center;\n"
-"    background-repeat: no-reperat;\n"
-"}")
+                                           "    background-image: url(:/16x16/icons/16x16/cil-size-grip.png);\n"
+                                           "    background-position: center;\n"
+                                           "    background-repeat: no-reperat;\n"
+                                           "}")
         self.frame_size_grip.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_size_grip.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_size_grip.setObjectName("frame_size_grip")
@@ -925,7 +934,6 @@ class Ui_MainWindow(object):
             #     self.csv_filename = ""
         else:
             QMessageBox.about(self, "Load file error", "File not found.")
-
 
     def selectionchange_2(self, val):
 
@@ -967,6 +975,7 @@ class Ui_MainWindow(object):
             self.comboBox.addItem('GPS_CNAV2')
 
         return self.decoder_str
+
     def selectionchange(self, val):
 
         if self.decoder_str == "DECODED":
@@ -1051,7 +1060,9 @@ class Ui_MainWindow(object):
 
     def output_path(self, out_str):
         options = QtWidgets.QFileDialog.Options()
-        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "QFileDialog.getSaveFileName()", str("Downlink" + "_" + out_str), "All Files (*);;Text Files (*.csv)", options=options)
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "QFileDialog.getSaveFileName()",
+                                                            str("Downlink" + "_" + out_str),
+                                                            "All Files (*);;Text Files (*.csv)", options=options)
 
         if fileName:
             return fileName
@@ -1108,4 +1119,3 @@ if __name__ == "__main__":
     decoder_ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
