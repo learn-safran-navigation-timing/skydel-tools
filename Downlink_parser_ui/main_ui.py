@@ -792,9 +792,12 @@ class Ui_MainWindow(object):
         self.comboBox.addItem('BEIDOU_CNAV2')
         self.comboBox.addItem('SBAS_NAV')
         self.comboBox.addItem('QZSS_LNAV')
+        self.comboBox.addItem('QZSS_CNAV')
+        self.comboBox.addItem('QZSS_CNAV2')
         self.comboBox.addItem('QZSS_SLAS')
         self.comboBox.addItem('QZSS_CLAS')
         self.comboBox.addItem('NAVIC_NAV')
+        self.comboBox.addItem('NAVIC_L1')
         self.comboBox.currentIndexChanged.connect(self.selectionchange)
 
         self.gridLayout_5.addWidget(self.comboBox, 0, 1, 1, 1)
@@ -945,6 +948,7 @@ class Ui_MainWindow(object):
             self.comboBox.addItem('QZSS_SLAS')
             self.comboBox.addItem('QZSS_CLAS')
             self.comboBox.addItem('NAVIC_NAV')
+            self.comboBox.addItem('NAVIC_L1')
 
         elif val == 1:
             self.decoder_str = "ENCODED"
@@ -1014,6 +1018,9 @@ class Ui_MainWindow(object):
 
             if val == 15:
                 self.nav_fam = 'NAVIC_NAV'
+
+            if val == 16:
+                self.nav_fam = 'NAVIC_L1'
 
         elif self.decoder_str == "ENCODED":
             if val == 0:

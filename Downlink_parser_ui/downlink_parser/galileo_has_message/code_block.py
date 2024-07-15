@@ -1,4 +1,4 @@
-from downlink_parser import utility
+import utility
 
 GNSS_ID = {0: "GPS", 2: "GALILEO"}
 SIGNAL_MASK = {0:["L1C/A", "Reserved", "Reserved", "L1C(D)", "L1C(P)", "L1C(D+P)", "L2 CM", "L2 CL", "L2 CM+CL", "L2 P", "Reserved", "L5 I", "L5 Q", "L5 I + L5 Q", "Reserved", "Reserved"],

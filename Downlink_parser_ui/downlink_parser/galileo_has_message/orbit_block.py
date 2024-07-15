@@ -1,4 +1,4 @@
-from downlink_parser import utility
+import utility
 
 GNSS_ID = {0: "GPS", 2: "GALILEO"}
 
