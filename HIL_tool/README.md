@@ -6,7 +6,7 @@ This example is related to the HIL training module that will come out soon. You 
 # Python installation:
 Make sure you have a python from version 3.8 or download the latest python version from https://www.python.org/downloads/.
 
-# Open a terminal and check your python version:
+# Open a terminal and check your Python version:
 $ python --version
 
 # Packages installation:
