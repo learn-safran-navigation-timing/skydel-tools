@@ -30,7 +30,7 @@ sim.connect()
 
 # Fix the simulation parameters
 sim.call(New(True))
-sim.call(SetModulationTarget("DTA-2115B", "", "", True, "uniqueId"))
+sim.call(SetModulationTarget("DTA-2116", "", "", True, "uniqueId"))
 sim.call(ChangeModulationTargetSignals(0, 1250000, 100000000, "UpperL", "G1", 50, False, "uniqueId"))
 sim.call(SetGpsStartTime(datetime(2015, 3, 5, 10, 0, 0)))
 sim.call(SetVehicleTrajectoryFixEcef("Fix", 3069028.047, 2509456.599, 4979704.738, 0, 0, 0))
