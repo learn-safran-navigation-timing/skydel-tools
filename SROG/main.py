@@ -1271,27 +1271,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.hour_count = self.hour_count - 24
                 self.day_count = self.day_count + 1
 
-            if int(self.day_count) == 30:
+            if int(self.day_count) > 30:
                 if int(self.month_count) in List_month_30:
                     self.day_count = 1
                     self.month_count = self.month_count + 1
-
-                    if int(self.month_count) >= 12:
-                        self.month_count = 1
-                        self.year_count = self.year_count + 1
 
             if int(self.day_count) > 31:
                 if int(self.month_count) in List_month_31:
                     self.day_count = 1
                     self.month_count = self.month_count + 1
 
-                    if int(self.month_count) >= 12:
+                    if int(self.month_count) > 12:
                         self.month_count = 1
                         self.year_count = self.year_count + 1
 
-            if int(self.day_count) == 28:
+            if int(self.day_count) > 28:
                 if int(self.month_count) == 2:
                     self.month_count = self.month_count + 1
+                    self.day_count = 1
 
             second = np.mod(second, 60)
 
