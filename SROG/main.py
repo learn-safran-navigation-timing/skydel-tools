@@ -1257,6 +1257,39 @@ class MainWindow(QtWidgets.QMainWindow):
         List_month_30 = [1, 4, 6, 9, 11]
         List_month_31 = [3, 5, 7, 8, 10, 12]
 
+        def _build_sat_line_for_epoch(m1, cnt_2, sys_char, list_dict_sys, time_comp):
+            
+            # Build one satellite observation line (e.g., 'G01 ...') for the current epoch
+            # Returns None if this satellite has no data at time_comp
+            
+            basename = m1.split(" ")
+            sat_int = basename[1]                # "01.csv"
+            sat_prn = int(sat_int.split(".")[0]) # 1
+
+            tline_2 = sys_char + "{:02d}".format(sat_prn)
+
+            wrote_any = False
+            for dict_data in list_dict_sys:
+                # Guard against out-of-range if something is inconsistent
+                if cnt_2 >= len(dict_data["TIME"]):
+                    continue
+
+                times = dict_data["TIME"][cnt_2]
+                if time_comp in times:
+                    time_id = list(times).index(time_comp)
+
+                    psr = "{: >14.3f}".format(dict_data["PSR"][cnt_2][time_id])
+                    adr = "{: >14.3f}".format(dict_data["ADR"][cnt_2][time_id])
+                    dop = "{: >14.3f}".format(dict_data["DOP"][cnt_2][time_id])
+
+                    # Quality flag
+                    tline_2 += psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
+                    wrote_any = True
+
+            if wrote_any and len(tline_2) > 4:
+                return tline_2
+            return None
+
         for n in range(0, N, 1):
             # *********************************************************************#
             if int(second) >= 59.9:
@@ -1290,332 +1323,111 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.month_count = self.month_count + 1
                     self.day_count = 1
 
-            second = np.mod(second, 60)
+            second = np.mod(second, 60)      
+            # ==============================================
 
-            tline = str('> ') + '{:0<4.0f}'.format(self.year_count) + str(' ') + "{:02d}".format(
-                self.month_count) + str(' ') + "{:02d}".format(
-                self.day_count) + str(' ') + "{:02d}".format(self.hour_count) + str(' ') + str(
-                "{0:0=2d}".format(self.minute_count)) + str(
-                ' ') + '{:0<10.7f}'.format(second) + str('  0 ') + "{:02d}".format(count_line_sat)
+            #  Build all satellite lines for this epoch first
+            epoch_lines = []
 
-            self.fid_w.write(tline)
-            self.fid_w.write('\n')
+            cnt_1 = 0  
 
-            second = second + self.time_step_list[0]
+            # Mixed mode
+            mixed_code = 1 if self.ubx_9.isChecked() else 0
 
-            # *********************************************************************#
-            cnt_1 = 0
-
-            if self.ubx_9.isChecked():
-                mixed_code = 1
-            else:
-                mixed_code = 0
-
+            # GPS
             if self.ubx_1.isChecked() or mixed_code == 1:
-                if list_band_g:
+                if list_band_g and list_dict_g:
                     for cnt_2 in range(len(list_band_g[cnt_1])):
-
                         m1 = list_band_g[cnt_1][cnt_2]
-                        basename = m1.split(" ")
-                        sat_band = basename[0]
-                        sat_int = basename[1]
-                        basename = sat_int.split(".")
-                        m2 = int(basename[0])
-                        tline_2 = "G" + str("{:02d}".format(int(m2)))
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "G", list_dict_g, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                        for dict_data in list_dict_g:
-
-                            if time_comp in list(dict_data["TIME"][cnt_2]):
-                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
-
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
-
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-
-                                tline_2 = tline_2 + tline_temp
-
-                            else:
-                                pass
-
-                        if len(tline_2) <= 4:
-                            pass
-                        else:
-                            self.fid_w.write(tline_2)
-                            self.fid_w.write('\n')
-
+            # GLONASS
             if self.ubx_2.isChecked() or mixed_code == 1:
-                if list_band_r:
-                   for cnt_2 in range(len(list_band_r[cnt_1])):
-                    m1 = list_band_r[cnt_1][cnt_2]
-                    basename = m1.split(" ")
-                    sat_band = basename[0]
-                    sat_int = basename[1]
-                    basename = sat_int.split(".")
-                    m2 = int(basename[0])
+                if list_band_r and list_dict_r:
+                    for cnt_2 in range(len(list_band_r[cnt_1])):
+                        m1 = list_band_r[cnt_1][cnt_2]
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "R", list_dict_r, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                    tline_2 = "R" + str("{:02d}".format(int(m2)))
-
-                    for dict_data in list_dict_r:
-                        if time_comp in list(dict_data["TIME"][cnt_2]):
-                            time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-
-                            psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                            adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                            dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
-
-                            if not psr:
-                                psr = "              "
-                            if not adr:
-                                adr = "              "
-                            if not dop:
-                                dop = "              "
-
-                            tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                            tline_2 = tline_2 + tline_temp
-                        else:
-                            pass
-
-                    if len(tline_2) <= 4:
-                        pass
-                    else:
-                        self.fid_w.write(tline_2)
-                        self.fid_w.write('\n')
-
+            # GALILEO
             if self.ubx_3.isChecked() or mixed_code == 1:
-                if list_band_e:
+                if list_band_e and list_dict_e:
                     for cnt_2 in range(len(list_band_e[cnt_1])):
                         m1 = list_band_e[cnt_1][cnt_2]
-                        basename = m1.split(" ")
-                        sat_band = basename[0]
-                        sat_int = basename[1]
-                        basename = sat_int.split(".")
-                        m2 = int(basename[0])
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "E", list_dict_e, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                        tline_2 = "E" + str("{:02d}".format(int(m2)))
-
-                        for dict_data in list_dict_e:
-
-                            if time_comp in list(dict_data["TIME"][cnt_2]):
-                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-
-                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
-
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
-
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                                tline_2 = tline_2 + tline_temp
-                            else:
-                                pass
-
-                        if len(tline_2) <= 4:
-                            pass
-                        else:
-                            self.fid_w.write(tline_2)
-                            self.fid_w.write('\n')
-
+            # BEIDOU
             if self.ubx_4.isChecked() or mixed_code == 1:
-                if list_band_c:
+                if list_band_c and list_dict_c:
                     for cnt_2 in range(len(list_band_c[cnt_1])):
                         m1 = list_band_c[cnt_1][cnt_2]
-                        basename = m1.split(" ")
-                        sat_band = basename[0]
-                        sat_int = basename[1]
-                        basename = sat_int.split(".")
-                        m2 = int(basename[0])
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "C", list_dict_c, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                        tline_2 = "C" + str("{:02d}".format(int(m2)))
-
-                        for dict_data in list_dict_c:
-                            if time_comp in list(dict_data["TIME"][cnt_2]):
-                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
-
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
-
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                                tline_2 = tline_2 + tline_temp
-
-                            else:
-                                pass
-                        if len(tline_2) <= 4:
-                            pass
-                        else:
-                            self.fid_w.write(tline_2)
-                            self.fid_w.write('\n')
-
+            # QZSS
             if self.ubx_5.isChecked() or mixed_code == 1:
-                if list_band_j:
+                if list_band_j and list_dict_j:
                     for cnt_2 in range(len(list_band_j[cnt_1])):
                         m1 = list_band_j[cnt_1][cnt_2]
-                        basename = m1.split(" ")
-                        sat_band = basename[0]
-                        sat_int = basename[1]
-                        basename = sat_int.split(".")
-                        m2 = int(basename[0])
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "J", list_dict_j, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                        tline_2 = "J" + str("{:02d}".format(int(m2)))
-
-                        for dict_data in list_dict_c:
-
-                            if time_comp in list(dict_data["TIME"][cnt_2]):
-                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
-
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
-
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                                tline_2 = tline_2 + tline_temp
-
-                            else:
-                                pass
-
-                        if len(tline_2) <= 4:
-                            pass
-                        else:
-                            self.fid_w.write(tline_2)
-                            self.fid_w.write('\n')
-
+            # KPS
             if self.ubx_6.isChecked() or mixed_code == 1:
-                if list_band_k:
+                if list_band_k and list_dict_k:
                     for cnt_2 in range(len(list_band_k[cnt_1])):
                         m1 = list_band_k[cnt_1][cnt_2]
-                        basename = m1.split(" ")
-                        sat_band = basename[0]
-                        sat_int = basename[1]
-                        basename = sat_int.split(".")
-                        m2 = int(basename[0])
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "K", list_dict_k, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                        tline_2 = "K" + str("{:02d}".format(int(m2)))
-
-                        for dict_data in list_dict_k:
-
-                            if time_comp in list(dict_data["TIME"][cnt_2]):
-                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
-
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
-
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                                tline_2 = tline_2 + tline_temp
-
-                            else:
-                                pass
-                        if len(tline_2) <= 4:
-                            pass
-                        else:
-                            self.fid_w.write(tline_2)
-                            self.fid_w.write('\n')
-
+            # NAVIC
             if self.ubx_7.isChecked() or mixed_code == 1:
-                if list_band_i:
+                if list_band_i and list_dict_i:
                     for cnt_2 in range(len(list_band_i[cnt_1])):
                         m1 = list_band_i[cnt_1][cnt_2]
-                        basename = m1.split(" ")
-                        sat_band = basename[0]
-                        sat_int = basename[1]
-                        basename = sat_int.split(".")
-                        m2 = int(basename[0])
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "I", list_dict_i, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                        tline_2 = "I" + str("{:02d}".format(int(m2)))
-
-                        for dict_data in list_dict_i:
-                            if time_comp in list(dict_data["TIME"][cnt_2]):
-                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-
-                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
-
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
-
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                                tline_2 = tline_2 + tline_temp
-
-                                if len(tline_2) <= 4:
-                                    pass
-                                else:
-                                    self.fid_w.write(tline_2)
-                                    self.fid_w.write('\n')
-                            else:
-                                pass
-
+            # SBAS
             if self.ubx_8.isChecked() or mixed_code == 1:
-                if list_band_s:
+                if list_band_s and list_dict_s:
                     for cnt_2 in range(len(list_band_s[cnt_1])):
                         m1 = list_band_s[cnt_1][cnt_2]
-                        basename = m1.split(" ")
-                        sat_band = basename[0]
-                        sat_int = basename[1]
-                        basename = sat_int.split(".")
-                        m2 = int(basename[0])
+                        ln = _build_sat_line_for_epoch(m1, cnt_2, "S", list_dict_s, time_comp)
+                        if ln is not None:
+                            epoch_lines.append(ln)
 
-                        tline_2 = "S" + str("{:02d}".format(int(m2)))
-                        for dict_data in list_dict_s:
-                            if time_comp in list(dict_data["TIME"][cnt_2]):
-                                time_id = list(dict_data["TIME"][cnt_2]).index(time_comp)
-                                psr = str('{: >14.3f}'.format(dict_data["PSR"][cnt_2][time_id]))
-                                adr = str('{: >14.3f}'.format(dict_data["ADR"][cnt_2][time_id]))
-                                dop = str('{: >14.3f}'.format(dict_data["DOP"][cnt_2][time_id]))
+            # Write epoch header with true count
+            nsat = len(epoch_lines)
 
-                                if not psr:
-                                    psr = "              "
-                                if not adr:
-                                    adr = "              "
-                                if not dop:
-                                    dop = "              "
+            tline = (
+                "> "
+                + "{:0<4.0f}".format(self.year_count) + " "
+                + "{:02d}".format(self.month_count) + " "
+                + "{:02d}".format(self.day_count) + " "
+                + "{:02d}".format(self.hour_count) + " "
+                + "{:02d}".format(self.minute_count) + " "
+                + "{:0<10.7f}".format(second)
+                + "  0 "
+                + "{:02d}".format(nsat)
+            )
+            self.fid_w.write(tline + "\n")
 
-                                tline_temp = psr + " " + str(7) + adr + " " + str(7) + dop + " " + str(7)
-                                tline_2 = tline_2 + tline_temp
+            # Write satellite lines
+            for ln in epoch_lines:
+                self.fid_w.write(ln + "\n")
 
-                            else:
-                                pass
-                        if len(tline_2) <= 4:
-                            pass
-                        else:
-                            self.fid_w.write(tline_2)
-                            self.fid_w.write('\n')
-
+            # =============================================================================                
+            second = second + self.time_step_list[0]
             time_comp = time_comp + 100
 
     def reset_func(self):
